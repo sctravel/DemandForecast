@@ -11,8 +11,10 @@ public class jettyServer {
 	    public void start() throws Exception {
 	        server = new Server();
 	        ServerConnector connector = new ServerConnector(server);
+	        server.setHandler(new HelloHandler());
 	        connector.setPort(8090);
 	        server.setConnectors(new Connector[] {connector});
+	        server.start();
 	        server.join();
 	    }
 }
