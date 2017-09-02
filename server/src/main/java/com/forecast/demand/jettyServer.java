@@ -1,6 +1,7 @@
-package com.forecast.demand.server;
+package com.forecast.demand;
 
 
+import com.forecast.demand.HelloHandler;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;

@@ -1,5 +1,7 @@
-package com.forecast.demand.server;
+package com.forecast.demand;
 
+
+import com.forecast.demand.common.DBLoader;
 
 /**
  * Hello world!
@@ -11,6 +13,7 @@ public class App
 {
     public static void main( String[] args )
     {
+    	/*
     	jettyServer server = new jettyServer();
     	try {
 			server.start();
@@ -18,6 +21,8 @@ public class App
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-        System.out.println( "Hello World!" );
+        System.out.println( "Hello World!" );*/
+		DBLoader loader = new DBLoader("","");
+		loader.loadDataFromFile("C:\\GitHub\\DemandForecast\\server\\db\\Yum.csv", ",","",null);
     }
 }

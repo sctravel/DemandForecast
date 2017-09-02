@@ -1,4 +1,4 @@
-package com.forecast.demand.server;
+package com.forecast.demand;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
