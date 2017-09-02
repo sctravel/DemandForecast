@@ -70,14 +70,14 @@ public class DBLoader {
                 for(Column c : columnList) {
                     setColumnValue(preparedStmt, c, content, index++);
                 }
-                preparedStmt.setString (1, "Barney");
+                /*preparedStmt.setString (1, "Barney");
                 preparedStmt.setString (2, "Rubble");
                 preparedStmt.setDate   (3, startDate);
                 preparedStmt.setBoolean(4, false);
                 preparedStmt.setInt    (5, 5000);
 
                 // execute the preparedstatement
-                preparedStmt.execute();
+                preparedStmt.execute();*/
                 System.out.println("Country [code= " + content[0] + " , name=" + content[5] + "]");
             }
         } catch (FileNotFoundException e) {
