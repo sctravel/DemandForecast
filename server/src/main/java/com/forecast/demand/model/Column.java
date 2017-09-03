@@ -11,7 +11,10 @@ public class Column {
         this.name = name;
         this.type = ColumnType.valueOf(type);
     }
-
+    public Column(String name, ColumnType type) {
+        this.name = name;
+        this.type = type;
+    }
     public String getName() {
         return this.name;
     }

@@ -1,0 +1,17 @@
+<table name="YumSalesForecast">
+    <columns>
+        <column>
+            <name>District</name>
+            <type>String</type>
+        </column>
+        <column>
+            <name>Provice</name>
+            <type>String</type>
+        </column>
+    </columns>
+    <dimensions>
+        <dimension>
+
+        </dimension>
+    </dimensions>
+</table>
