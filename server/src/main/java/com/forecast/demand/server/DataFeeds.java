@@ -9,21 +9,29 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import com.forecast.demand.common.DBLoader;
+
+
 @Path("data")
 public class DataFeeds {
+	
+	 DBLoader loader = new DBLoader();
 	
 	  @GET
 	  @Path("/table")
 	  @Produces(MediaType.APPLICATION_JSON)
-	  public String getTables() {
-	    return "{}";
+	  public String getTables() { 
+		System.out.print("get tables start");
+        String results = loader.getTables();
+	    return results;
 	  }
 	  
 	  @GET
 	  @Path("/table/columns/{tableName}")
 	  @Produces(MediaType.APPLICATION_JSON)
 	  public String getColumns(@PathParam("tableName") String tableName) {
-	    return "{}";
+		  String results = loader.getTables();
+		    return results;
 	  }
 	  
 	  @GET
