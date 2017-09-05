@@ -20,14 +20,14 @@ public class DataFeeds {
 	  }
 	  
 	  @GET
-	  @Path("/table/{tableName}")
+	  @Path("/table/columns/{tableName}")
 	  @Produces(MediaType.APPLICATION_JSON)
 	  public String getColumns(@PathParam("tableName") String tableName) {
 	    return "{}";
 	  }
 	  
 	  @GET
-	  @Path("/table/{tableName}")
+	  @Path("/table/measures/{tableName}")
 	  @Produces(MediaType.APPLICATION_JSON)
 	  public String getMeatures(@PathParam("tableName") String tableName) {
 	    return "{}";
@@ -42,7 +42,7 @@ public class DataFeeds {
 	  }
 	  
 	  @GET
-	  @Path("/table/{tableName}/{DimList}/{MeasureList}/{filter}")
+	  @Path("/table/query/{tableName}/{DimList}/{MeasureList}/{filter}")
 	  @Produces(MediaType.APPLICATION_JSON)
 	  public String query(@PathParam("tableName")String tableName, @PathParam("DimList") List<String> DimList,
 			  @PathParam("measureList") List<String> measureList, @PathParam("filter") String filter) {
@@ -50,7 +50,7 @@ public class DataFeeds {
 	  }
 	  
 	  @POST
-	  @Path("/table/{tableName}/{DimList}/{changeList}/{filter}")
+	  @Path("/table/adjust/{tableName}/{DimList}/{changeList}/{filter}")
 	  @Produces(MediaType.APPLICATION_JSON)
 	  public String adjustValue(@PathParam("tableName")String tableName, @PathParam("DimList") List<String> DimList,
 			  @PathParam("changeList") List<String> changeList, @PathParam("filter") String filter) {

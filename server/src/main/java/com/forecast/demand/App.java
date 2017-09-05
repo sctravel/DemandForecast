@@ -2,14 +2,18 @@ package com.forecast.demand;
 
 import java.util.List;
 import java.util.ArrayList;
+
 import com.forecast.demand.common.DBLoader;
 import com.forecast.demand.model.Column;
 import com.forecast.demand.model.ColumnType;
+
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.servlet.ServletContainer;
 
 /**
  * Hello world!
@@ -21,37 +25,19 @@ public class App
 {
     public static void main( String[] args )
     {
-    	//jettyServer server = new jettyServer();
-    	/*
-    	ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
-        context.setContextPath("/");
-    	Server server = new Server();
-    	server.setHandler(context);
     	
+    	Server server = new Server();
     	ServerConnector connector = new ServerConnector(server);
-        server.setHandler(new HelloHandler());
+       
         connector.setPort(8090);
         server.setConnectors(new Connector[] {connector});
-        
-        ServletHolder jerseyServlet = context.addServlet(
-                org.glassfish.jersey.servlet.ServletContainer.class, "/*");
-           jerseyServlet.setInitOrder(0);
-
-           // Tells the Jersey Servlet which REST service/class to load.
-           //jerseyServlet.setInitParameter(
-              //"jersey.config.server.provider.classnames",
-             // DataFeeds.class.getCanonicalName());
+           
+       ResourceConfig config = new ResourceConfig();
+       config.packages("com.forecast.demand.server");
+       ServletHolder servlet = new ServletHolder(new ServletContainer(config));
+       ServletContextHandler context = new ServletContextHandler(server, "/*");
+       context.addServlet(servlet, "/*");
        
-      
-    	try {
-			server.start();
-			server.join();
-    
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			server.destroy();
-		}*/
 		DBLoader loader = new DBLoader();
 		List<Column> columnList = new ArrayList<Column>();
 		columnList.add(new Column("District", ColumnType.STRING));
@@ -72,7 +58,20 @@ public class App
 
 
 
-		loader.loadDataFromFile("/Users/XiTU/javaWorkSpace/DemandForecast/server/db/Yum.csv", ",", "YumSalesForecast", columnList);
-        System.out.println( "Hello World!" );
+//		loader.loadDataFromFile("/Users/XiTU/javaWorkSpace/DemandForecast/server/db/Yum.csv", ",", "YumSalesForecast", columnList);
+       System.out.println( "Hello World!" );
+      
+    	try {
+			server.start();
+			server.join();
+    
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			server.destroy();
+		}
+    	
+    	
+
     }
 }
