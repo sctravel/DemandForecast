@@ -23,7 +23,7 @@ public class DBUtil {
             // access configuration properties
             String dbHost = config.getString("database.host");
             int dbPort = config.getInt("database.port");
-            int dbName = config.getInt("database.dbname");
+            String dbName = config.getString("database.dbname");
             String dbUser = config.getString("database.user");
             String dbPassword = config.getString("database.password", "secret");  // provide a default
             long dbTimeout = config.getLong("database.timeout");
@@ -38,6 +38,8 @@ public class DBUtil {
         } catch (SQLException e) {
             // Could not connect to the database
             e.printStackTrace();
+        } catch(Exception e){
+        	 e.printStackTrace();
         }
         return connection;
     }
