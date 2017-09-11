@@ -8,8 +8,13 @@ import com.forecast.demand.model.Column;
 import com.forecast.demand.model.ColumnType;
 
 import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.handler.ContextHandler;
+import org.eclipse.jetty.server.handler.HandlerCollection;
+import org.eclipse.jetty.server.handler.ResourceHandler;
+import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -20,6 +25,10 @@ import org.glassfish.jersey.servlet.ServletContainer;
  * navigate to top level folder which contains pom.xml, then run the following command to
  * start maven server
  * mvn clean compile exec:java -e
+ * for resource try the example below after jetty server bootup
+ * http://localhost:8090/home/test.html
+ * for rest end point try example below after jetty server bootup
+ * 
  */
 public class App 
 {
@@ -31,12 +40,32 @@ public class App
        
         connector.setPort(8090);
         server.setConnectors(new Connector[] {connector});
-           
+                  
        ResourceConfig config = new ResourceConfig();
        config.packages("com.forecast.demand.server");
        ServletHolder servlet = new ServletHolder(new ServletContainer(config));
-       ServletContextHandler context = new ServletContextHandler(server, "/*");
-       context.addServlet(servlet, "/*");
+       ServletContextHandler restAPIhandler = new ServletContextHandler(server, "/*");
+       restAPIhandler.addServlet(servlet, "/*");
+       
+       ResourceHandler resourceHandler= new ResourceHandler();
+       resourceHandler.setResourceBase("public");
+       resourceHandler.setDirectoriesListed(true);
+       resourceHandler.setWelcomeFiles(new String [] {"test.html"});
+       ContextHandler contextStaticContentHandler= new ContextHandler("/home");
+       contextStaticContentHandler.setHandler(resourceHandler);
+       
+       //restAPIhandler,
+       HandlerCollection handlerCollection = new HandlerCollection();
+       handlerCollection.setHandlers(new Handler[] {contextStaticContentHandler,restAPIhandler});
+       
+       server.setHandler(handlerCollection);
+       /*
+       ServletHolder staticHolder = new ServletHolder("static-home",new DefaultServlet());
+       staticHolder.setInitParameter("dirAllowed","true");
+       staticHolder.setInitParameter("pathInfoOnly", "true");
+       staticHolder.setInitParameter("resourceBase", "public");
+       context.addServlet(staticHolder, "/home/*");*/
+
        
 		DBLoader loader = new DBLoader();
 		List<Column> columnList = new ArrayList<Column>();
