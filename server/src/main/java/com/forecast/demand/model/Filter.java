@@ -2,15 +2,15 @@ package com.forecast.demand.model;
 
 public class Filter {
     String columnName;
-    String value;
+    String values;
     FilterOperation operation;
 
     public String getColumnName() {
         return this.columnName;
     }
 
-    public String getValue() {
-        return this.value;
+    public String getValues() {
+        return this.values;
     }
 
     public FilterOperation getOperation() {

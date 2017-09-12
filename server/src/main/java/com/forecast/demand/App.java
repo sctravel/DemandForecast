@@ -3,10 +3,13 @@ package com.forecast.demand;
 import java.util.List;
 import java.util.ArrayList;
 
+import com.forecast.demand.common.DBHelper;
 import com.forecast.demand.common.DBLoader;
-import com.forecast.demand.model.Column;
+import com.forecast.demand.common.XmlHelper;
+import com.forecast.demand.model.Table;
 import com.forecast.demand.model.ColumnType;
 
+import com.forecast.demand.controller.DataFeeds;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
@@ -34,8 +37,12 @@ public class App
 {
     public static void main( String[] args )
     {
-    	
+
+    	ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
+        context.setContextPath("/");
     	Server server = new Server();
+    	server.setHandler(context);
+
     	ServerConnector connector = new ServerConnector(server);
        
         connector.setPort(8090);
@@ -66,28 +73,8 @@ public class App
        staticHolder.setInitParameter("resourceBase", "public");
        context.addServlet(staticHolder, "/home/*");*/
 
-       
-		DBLoader loader = new DBLoader();
-		List<Column> columnList = new ArrayList<Column>();
-		columnList.add(new Column("District", ColumnType.STRING));
-		columnList.add(new Column("Province", ColumnType.STRING));
-		columnList.add(new Column("City", ColumnType.STRING));
-		columnList.add(new Column("DistributionCenter", ColumnType.STRING));
-		columnList.add(new Column("Item", ColumnType.STRING));
-		columnList.add(new Column("Category", ColumnType.STRING));
-		columnList.add(new Column("Subcategory", ColumnType.STRING));
-		columnList.add(new Column("DetailCategory", ColumnType.STRING));
-		columnList.add(new Column("SalesType", ColumnType.STRING));
-		columnList.add(new Column("SalesDate", ColumnType.DATETIME));
-		columnList.add(new Column("HistoricalSalesNumber", ColumnType.INTEGER));
-		columnList.add(new Column("ForecastSalesNumber", ColumnType.INTEGER));
-		columnList.add(new Column("MarketingAdjustment", ColumnType.INTEGER));
-		columnList.add(new Column("DemandPlannerAdjustment", ColumnType.INTEGER));
-		columnList.add(new Column("ConsensusForecast", ColumnType.INTEGER));
 
 
-
-//		loader.loadDataFromFile("/Users/XiTU/javaWorkSpace/DemandForecast/server/db/Yum.csv", ",", "YumSalesForecast", columnList);
        System.out.println( "Hello World!" );
       
     	try {
@@ -99,8 +86,8 @@ public class App
 			e.printStackTrace();
 			server.destroy();
 		}
-    	
-    	
 
+
+        System.out.println( "Hello World!" );
     }
 }

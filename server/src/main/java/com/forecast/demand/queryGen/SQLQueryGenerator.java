@@ -34,7 +34,7 @@ public class SQLQueryGenerator implements IQueryGenerator{
             } else {
                 sb.append(" AND ");
             }
-            sb.append(f.getColumnName() + f.getOperation().toString() + f.getValue());
+            //sb.append(f.getColumnName() + f.getOperation().toString() + f.getValue());
         }
         return sb.toString();
     }
