@@ -12,6 +12,7 @@ import java.util.List;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 @Path("data")
 public class DataFeeds {
@@ -20,39 +21,39 @@ public class DataFeeds {
 	@GET
 	@Path("/tables")
 	@Produces(MediaType.APPLICATION_JSON+"; charset=utf-8")
-	public String getTables() {
+	public Response getTables() {
 		List<Table> tables = GlobalCache.getTables();
 		ObjectMapper mapper = new ObjectMapper();
 		String value = null;
 		try {
 			value = mapper.writeValueAsString(tables);
-			System.out.println("JSON - " +tables.size() + value);
 		} catch (Exception e) {
 			e.printStackTrace();
+			return Response.serverError().build();
 		}
-		return value;
+		return Response.ok().entity(value).build();
 	}
 
 	@GET
 	@Path("/tables/{tableName}")
 	@Produces(MediaType.APPLICATION_JSON+"; charset=utf-8")
-	public String getColumns(@PathParam("tableName") String tableName) {
+	public Response getColumns(@PathParam("tableName") String tableName) {
 		Table table = GlobalCache.getTable(tableName);
 		ObjectMapper mapper = new ObjectMapper();
 		String value = null;
 		try {
 			value = mapper.writeValueAsString(table);
-			System.out.println("JSON - " + value);
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-		return value;
+            return Response.serverError().build();
+        }
+		return Response.ok().entity(value).build();
 	}
 
 	@GET
 	@Path("/tables/{tableName}/distinctValues")
     @Produces(MediaType.APPLICATION_JSON+"; charset=utf-8")
-	public String getDistinctValues(@PathParam("tableName")String tableName, @QueryParam("dimName") List<String> DimList,
+	public Response getDistinctValues(@PathParam("tableName")String tableName, @QueryParam("dimName") List<String> DimList,
 		  @QueryParam("filter") String filter) {
         List<String> columnNames = new ArrayList<>();
         columnNames.addAll(DimList);
@@ -66,17 +67,17 @@ public class DataFeeds {
         String value = null;
         try {
             value = mapper.writeValueAsString(res);
-            System.out.println("JSON - " + value);
         } catch (Exception e) {
             e.printStackTrace();
+            return Response.serverError().build();
         }
-        return value;
+        return Response.ok().entity(value).build();
 	}
 
 	@GET
 	@Path("/tables/{tableName}/query")
 	@Produces(MediaType.APPLICATION_JSON+"; charset=utf-8")
-	public String query(@PathParam("tableName")String tableName, @QueryParam("dimList") List<String> DimList,
+	public Response query(@PathParam("tableName")String tableName, @QueryParam("dimList") List<String> DimList,
 		  @QueryParam("measureList") List<String> measureList, @QueryParam("filter") String filter) {
         List<String> columnNames = new ArrayList<>();
         columnNames.addAll(DimList);
@@ -86,7 +87,6 @@ public class DataFeeds {
         queryBuilder.append(sqlGen.generateFrom(tableName));
         if(filter!=null&&!filter.trim().isEmpty()) queryBuilder.append(sqlGen.generateWhere(filter));
         String query = queryBuilder.toString();
-        System.out.println("Query - " + query);
         List<List<String>> res = DBHelper.getQueryResult(query);
 
         ObjectMapper mapper = new ObjectMapper();
@@ -96,8 +96,9 @@ public class DataFeeds {
             System.out.println("JSON - " + value);
         } catch (Exception e) {
             e.printStackTrace();
+            return Response.serverError().build();
         }
-        return value;
+        return Response.ok().entity(value).build();
 	}
 
 	@POST
@@ -105,6 +106,6 @@ public class DataFeeds {
 	@Produces(MediaType.APPLICATION_JSON+"; charset=utf-8")
 	public String adjustValue(@PathParam("tableName")String tableName, @PathParam("DimList") List<String> DimList,
 		  @PathParam("changeList") List<String> changeList, @PathParam("filter") String filter) {
-	return "{}";
+	    return "{}";
 	}
 }

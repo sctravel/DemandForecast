@@ -31,7 +31,6 @@ public class GlobalCache {
     }
 
     public static List<Table> getTables() {
-        //TODO add implementation
         return new ArrayList<>(tableCache.values());
     }
 }
