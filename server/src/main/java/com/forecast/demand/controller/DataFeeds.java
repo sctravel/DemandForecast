@@ -6,6 +6,7 @@ import com.forecast.demand.common.DBHelper;
 import com.forecast.demand.model.Column;
 import com.forecast.demand.model.Table;
 import com.forecast.demand.queryGen.SQLQueryGenerator;
+import com.forecast.demand.queryGen.IQueryGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +17,7 @@ import javax.ws.rs.core.Response;
 
 @Path("data")
 public class DataFeeds {
-	private SQLQueryGenerator sqlGen = new SQLQueryGenerator();
+	private IQueryGenerator sqlGen = new SQLQueryGenerator();
 
 	@GET
 	@Path("/tables")

@@ -16,12 +16,26 @@ import org.w3c.dom.*;
 
 public class XmlHelper {
 
-    public static boolean addNewTable(String filepath) {
+    public static boolean addNewTableConfig(String filepath) {
         String sql = "insert into TableMetadata (tablename, xmlconfig, owners, description) values (?, ?, ?, ?)";
         try {
             String xmlContent = new String(Files.readAllBytes(Paths.get(filepath)));
             Table table = readTableFromXmlConfig(filepath);
             DBHelper.runQuery(sql, new String[]{table.getName(), xmlContent, table.getOwners(), table.getDescription()},
+                    new ColumnType[]{ColumnType.STRING, ColumnType.STRING, ColumnType.STRING, ColumnType.STRING});
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean updateTableConfig(String filepath) {
+        String sql = "update TableMetadata set xmlconfig= ?, owners = ? , description = ? where tablename = ?";
+        try {
+            String xmlContent = new String(Files.readAllBytes(Paths.get(filepath)));
+            Table table = readTableFromXmlConfig(filepath);
+            DBHelper.runQuery(sql, new String[]{xmlContent, table.getOwners(), table.getDescription(), table.getName()},
                     new ColumnType[]{ColumnType.STRING, ColumnType.STRING, ColumnType.STRING, ColumnType.STRING});
         } catch (Exception ex) {
             ex.printStackTrace();
