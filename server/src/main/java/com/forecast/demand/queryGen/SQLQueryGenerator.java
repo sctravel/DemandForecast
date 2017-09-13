@@ -1,27 +1,29 @@
 package com.forecast.demand.queryGen;
 
-import com.forecast.demand.model.Column;
 import com.forecast.demand.model.Filter;
-import com.forecast.demand.model.Table;
 
 import java.util.List;
 
 public class SQLQueryGenerator implements IQueryGenerator{
 
-    public String generateSelect(List<Column> columns, boolean isDistinct) {
+    public String generateSelect(List<String> columnNames, boolean isDistinct) {
         StringBuilder sb = new StringBuilder();
         sb.append(" SELECT ");
         if(isDistinct) sb.append(" DISTINCT ");
-        for(Column c : columns) {
-            sb.append("\n " + c.getName() + ",");
+        for(String name : columnNames) {
+            sb.append("\n " + name + ",");
         }
         sb.deleteCharAt(sb.length()-1);
         sb.append(" ");
         return sb.toString();
     }
 
-    public String generateFrom(Table table){
-        return "\n FROM " + table.getName();
+    public String generateFrom(String tableName){
+        return "\n FROM " + tableName;
+    }
+
+    public String generateWhere(String filter) {
+        return "\n Where " + filter;
     }
 
     public String generateWhere(List<Filter> filters) {

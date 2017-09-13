@@ -48,46 +48,45 @@ public class App
         connector.setPort(8090);
         server.setConnectors(new Connector[] {connector});
                   
-       ResourceConfig config = new ResourceConfig();
-       config.packages("com.forecast.demand.server");
-       ServletHolder servlet = new ServletHolder(new ServletContainer(config));
-       ServletContextHandler restAPIhandler = new ServletContextHandler(server, "/*");
-       restAPIhandler.addServlet(servlet, "/*");
+        ResourceConfig config = new ResourceConfig();
+        config.packages("com.forecast.demand");
+        ServletHolder servlet = new ServletHolder(new ServletContainer(config));
+        ServletContextHandler restAPIhandler = new ServletContextHandler(server, "/*");
+        restAPIhandler.addServlet(servlet, "/*");
        
-       ResourceHandler resourceHandler= new ResourceHandler();
-       resourceHandler.setResourceBase("public");
-       resourceHandler.setDirectoriesListed(true);
-       resourceHandler.setWelcomeFiles(new String [] {"test.html"});
-       ContextHandler contextStaticContentHandler= new ContextHandler("/home");
-       contextStaticContentHandler.setHandler(resourceHandler);
+        ResourceHandler resourceHandler= new ResourceHandler();
+        resourceHandler.setResourceBase("public");
+        resourceHandler.setDirectoriesListed(true);
+        resourceHandler.setWelcomeFiles(new String [] {"test.html"});
+        ContextHandler contextStaticContentHandler= new ContextHandler("/home");
+        contextStaticContentHandler.setHandler(resourceHandler);
        
-       //restAPIhandler,
-       HandlerCollection handlerCollection = new HandlerCollection();
-       handlerCollection.setHandlers(new Handler[] {contextStaticContentHandler,restAPIhandler});
+        //restAPIhandler,
+        HandlerCollection handlerCollection = new HandlerCollection();
+        handlerCollection.setHandlers(new Handler[] {contextStaticContentHandler,restAPIhandler});
        
-       server.setHandler(handlerCollection);
-       /*
-       ServletHolder staticHolder = new ServletHolder("static-home",new DefaultServlet());
-       staticHolder.setInitParameter("dirAllowed","true");
-       staticHolder.setInitParameter("pathInfoOnly", "true");
-       staticHolder.setInitParameter("resourceBase", "public");
-       context.addServlet(staticHolder, "/home/*");*/
+        server.setHandler(handlerCollection);
+
+        ServletHolder staticHolder = new ServletHolder("static-home",new DefaultServlet());
+        staticHolder.setInitParameter("dirAllowed","true");
+        staticHolder.setInitParameter("pathInfoOnly", "true");
+        staticHolder.setInitParameter("resourceBase", "public");
+        context.addServlet(staticHolder, "/home/*");
+
+        GlobalCache.initialize();
+        System.out.println(GlobalCache.getTable("YumSalesForecast").getName());
+
+        try {
+            server.start();
+            server.join();
 
 
+        } catch (Exception e) {
+            e.printStackTrace();
+            server.destroy();
+        }
 
-       System.out.println( "Hello World!" );
-      
-    	try {
-			server.start();
-			server.join();
-    
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			server.destroy();
-		}
+        //Initialize Global Cache for all Table Config
 
-
-        System.out.println( "Hello World!" );
     }
 }

@@ -1,13 +1,65 @@
 package com.forecast.demand.common;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import com.forecast.demand.model.ColumnType;
+
+import java.sql.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DBHelper {
+
+    public static void runQuery(String query, String[] values, ColumnType[] types) {
+        Connection connection = null;
+        PreparedStatement preparedStmt = null;
+        try {
+            connection = DBUtil.getConnection();
+            preparedStmt = connection.prepareStatement(query);
+
+            int index = 0;
+            System.out.println("values length - " + values.length);
+            while(index<values.length) {
+                if(types[index]==ColumnType.STRING) {
+                    preparedStmt.setString (index+1, values[index]);
+                } else if(types[index]==ColumnType.INTEGER) {
+                    preparedStmt.setInt(index+1, Integer.parseInt(values[index]));
+                } else if(types[index]==ColumnType.BOOLEAN) {
+                    preparedStmt.setBoolean(index+1, Boolean.valueOf(values[index]));
+                } else if(types[index]==ColumnType.DATETIME) {
+                    LocalDate date = LocalDate.parse(values[index], DateTimeFormatter.BASIC_ISO_DATE);
+                    preparedStmt.setDate(index+1, date==null? java.sql.Date.valueOf("0000-01-01") :java.sql.Date.valueOf(date));
+                } else if(types[index]==ColumnType.DECIMAL) {
+                    preparedStmt.setDouble(index+1,Double.parseDouble(values[index]));
+                } else {
+                    preparedStmt.setString (index+1, values[index]);
+                }
+                ++index;
+            }
+
+            // execute the preparedstatement
+            preparedStmt.execute();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if(connection!=null) {
+                try {
+                    connection.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            if(preparedStmt!=null) {
+                try {
+                    preparedStmt.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+    }
 
     public static List<List<String>> getQueryResult(String query) {
         //String query = "SELECT table_name FROM information_schema.tables where table_schema='Inventory'";

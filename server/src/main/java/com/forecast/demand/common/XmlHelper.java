@@ -1,18 +1,36 @@
 package com.forecast.demand.common;
 
 import com.forecast.demand.model.Column;
+import com.forecast.demand.model.ColumnType;
 import com.forecast.demand.model.Dimension;
 import com.forecast.demand.model.Table;
-import java.io.File;
+
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import org.w3c.dom.*;
 
 public class XmlHelper {
-    public static Table readTableFromXmlConfig(String filepath) {
+
+    public static boolean addNewTable(String filepath) {
+        String sql = "insert into TableMetadata (tablename, xmlconfig, owners, description) values (?, ?, ?, ?)";
+        try {
+            String xmlContent = new String(Files.readAllBytes(Paths.get(filepath)));
+            Table table = readTableFromXmlConfig(filepath);
+            DBHelper.runQuery(sql, new String[]{table.getName(), xmlContent, table.getOwners(), table.getDescription()},
+                    new ColumnType[]{ColumnType.STRING, ColumnType.STRING, ColumnType.STRING, ColumnType.STRING});
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public static Table readTableFromXmlConfig(String xmlContent) {
         String owners = null;
         String tableName = null;
         String description = null;
@@ -22,10 +40,12 @@ public class XmlHelper {
 
         try {
 
-            File fXmlFile = new File(filepath);
+            //File fXmlFile = new File(filepath);
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            Document doc = dBuilder.parse(fXmlFile);
+            InputStream inputStream = new ByteArrayInputStream(xmlContent.getBytes());
+
+            Document doc = dBuilder.parse(inputStream);
 
             //optional, but recommended
             //read this - http://stackoverflow.com/questions/13786607/normalization-in-dom-parsing-with-java-how-does-it-work
@@ -70,7 +90,7 @@ public class XmlHelper {
                 Element eElement = (Element) nNode;
                 List<String> levels = new ArrayList<>();
                 String dimensionName = eElement.getElementsByTagName("name").item(0).getTextContent();
-                Node levelsNode = root.getElementsByTagName("levels").item(0);
+                Node levelsNode = eElement.getElementsByTagName("levels").item(0);
                 NodeList levelList = levelsNode.getChildNodes();
                 for (int i = 0; i < levelList.getLength(); i++) {
                     Node lNode = levelList.item(i);

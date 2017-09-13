@@ -1,5 +1,14 @@
 use Inventory;
 
+CREATE TABLE TableMetadata (
+    TableName varchar(128) PRIMARY KEY NOT NULL,
+    XMLConfig blob,
+    owners varchar(1024),
+    description varchar(1024),
+    createdTime timestamp default now(),
+    lastUpdatedTime timestamp default now() on update now()
+)
+
 CREATE TABLE YumSalesForecast (
     District varchar(128),
     Province varchar(128),
@@ -15,5 +24,7 @@ CREATE TABLE YumSalesForecast (
     ForecastSalesNumber int,
     MarketingAdjustment int,
     DemandPlannerAdjustment int,
-    ConsensusForecast int
+    ConsensusForecast int,
+    createdTime timestamp default now(),
+    lastUpdatedTime timestamp default now() on update now()
 ) ENGINE=InnoDB CHARACTER SET=utf8;

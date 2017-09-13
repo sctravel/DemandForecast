@@ -7,7 +7,7 @@ import com.forecast.demand.model.Table;
 import java.util.List;
 
 public interface IQueryGenerator {
-    String generateSelect(List<Column> columns, boolean isDistinct);
-    String generateFrom(Table table);
-    String generateWhere(List<Filter> filters);
+    String generateSelect(List<String> columnNames, boolean isDistinct);
+    String generateFrom(String tableName);
+    String generateWhere(String filter);
 }

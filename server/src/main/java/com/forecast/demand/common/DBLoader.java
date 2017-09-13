@@ -81,17 +81,17 @@ public class DBLoader {
             }
             
         } catch (SQLException e) {
-        e.printStackTrace();
-    } finally {
-        
-        if(connection!=null) {
-            try {
-                connection.close();
-            } catch (Exception e) {
-                e.printStackTrace();
+            e.printStackTrace();
+        } finally {
+
+            if(connection!=null) {
+                try {
+                    connection.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
-    }
     	
     	return result.toString();
     }
@@ -101,12 +101,13 @@ public class DBLoader {
         BufferedReader br = null;
         String line = "";
         Connection connection = null;
+        PreparedStatement preparedStmt=null;
         try {
             br = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "UTF-8"));
             connection = DBUtil.getConnection();
             connection.setAutoCommit(false);
             String query = generateInsertStatement(tableName, columnList);
-            PreparedStatement preparedStmt = connection.prepareStatement(query);
+            preparedStmt = connection.prepareStatement(query);
             int count = 0;
             while ((line = br.readLine()) != null) {
                 ++count;
@@ -139,6 +140,13 @@ public class DBLoader {
             if(connection!=null) {
                 try {
                     connection.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            if(preparedStmt!=null) {
+                try {
+                    preparedStmt.close();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
