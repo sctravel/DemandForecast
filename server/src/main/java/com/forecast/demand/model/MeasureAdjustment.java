@@ -6,15 +6,21 @@ import java.util.Map;
  */
 public class MeasureAdjustment {
     private Map<String, String> dimensionValues;
-    private String measureName;
+    private String tableName, measureName;
     private double newValue, oldValue;
     //private Policy adjustPolicy
 
-    public MeasureAdjustment(Map<String, String> dimValues, String measureName, double oldValue, double newValue) {
+    public MeasureAdjustment(String tableName, Map<String, String> dimValues,
+                             String measureName, double oldValue, double newValue) {
+        this.tableName = tableName;
         this.dimensionValues = dimValues;
         this.measureName = measureName;
         this.oldValue = oldValue;
         this.newValue = newValue;
+    }
+
+    public String getTableName() {
+        return tableName;
     }
 
     public Map<String, String> getDimensionValues() {

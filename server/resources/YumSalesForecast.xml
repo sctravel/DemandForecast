@@ -6,86 +6,87 @@
         <column>
             <name>District</name>
             <type>String</type>
-            <displayName></displayName>
+            <displayName>大区</displayName>
         </column>
         <column>
             <name>Provice</name>
             <type>String</type>
-            <displayName></displayName>
+            <displayName>省</displayName>
         </column>
         <column>
             <name>City</name>
             <type>String</type>
-            <displayName></displayName>
+            <displayName>市</displayName>
         </column>
         <column>
             <name>DistributionCenter</name>
             <type>String</type>
-            <displayName></displayName>
+            <displayName>DC</displayName>
         </column>
         <column>
             <name>Item</name>
             <type>String</type>
-            <displayName></displayName>
+            <displayName>Saleable Item</displayName>
         </column>
         <column>
             <name>Category</name>
             <type>String</type>
-            <displayName></displayName>
+            <displayName>大类</displayName>
         </column>
         <column>
             <name>Subcategory</name>
             <type>String</type>
-            <displayName></displayName>
+            <displayName>中类</displayName>
         </column>
         <column>
             <name>DetailCategory</name>
             <type>String</type>
-            <displayName></displayName>
+            <displayName>小类</displayName>
         </column>
         <column>
             <name>SalesType</name>
             <type>String</type>
-            <displayName></displayName>
+            <displayName>销售类型</displayName>
         </column>
         <column>
             <name>SalesDate</name>
             <type>DateTime</type>
-            <displayName></displayName>
+            <displayName>日期</displayName>
         </column>
         <column>
             <name>HistoricalSalesNumber</name>
             <type>Integer</type>
-            <displayName></displayName>
+            <displayName>历史SR</displayName>
             <isMeasure>true</isMeasure>
         </column>
         <column>
             <name>ForecastSalesNumber</name>
             <type>Integer</type>
-            <displayName></displayName>
+            <displayName>SR预测</displayName>
             <isMeasure>true</isMeasure>
         </column>
         <column>
             <name>MarketingAdjustment</name>
             <type>Integer</type>
-            <displayName></displayName>
+            <displayName>Category与Marketing调整</displayName>
             <isMeasure>true</isMeasure>
             <isEditable>true</isEditable>
         </column>
         <column>
             <name>DemandPlannerAdjustment</name>
             <type>Integer</type>
-            <displayName></displayName>
+            <displayName>Demand Planner 调整</displayName>
             <isMeasure>true</isMeasure>
             <isEditable>true</isEditable>
         </column>
         <column>
             <name>ConsensusForecast</name>
             <type>Integer</type>
-            <displayName></displayName>
+            <displayName>Consensus Forecast</displayName>
             <isMeasure>true</isMeasure>
         </column>
     </columns>
+    <!-- Dimension Column should always be String type-->
     <dimensions>
         <dimension>
             <name>Location</name>

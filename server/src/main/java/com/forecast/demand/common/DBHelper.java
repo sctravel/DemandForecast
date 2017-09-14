@@ -64,6 +64,8 @@ public class DBHelper {
     public static List<List<String>> getQueryResult(String query) {
         //String query = "SELECT table_name FROM information_schema.tables where table_schema='Inventory'";
         List<List<String>> result = new ArrayList<List<String>>();
+        if(query==null||query.isEmpty()) return result;
+        System.out.println("Query - " + query);
         Connection connection = DBUtil.getConnection();
         Statement stmt = null;
         ResultSet rs = null;
@@ -79,7 +81,6 @@ public class DBHelper {
                     //  the column as a particular type. Refer to the Sun documentation
                     //  for the list of valid conversions.
                     list.add(rs.getString(i));
-                    System.out.println( "COLUMN " + i + " = " + rs.getObject(i) );
                 }
                 result.add(list);
             }
