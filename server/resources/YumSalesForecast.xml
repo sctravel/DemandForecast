@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <table>
     <name>YumSalesForecast</name>
     <description>Sales forecast and adjustment for Yum</description>
@@ -9,7 +10,7 @@
             <displayName>大区</displayName>
         </column>
         <column>
-            <name>Provice</name>
+            <name>Province</name>
             <type>String</type>
             <displayName>省</displayName>
         </column>

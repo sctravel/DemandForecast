@@ -21,13 +21,14 @@ public class DataFeeds {
 
 	@GET
 	@Path("/tables")
-	@Produces(MediaType.APPLICATION_JSON+"; charset=utf-8")
+    @Produces(MediaType.APPLICATION_JSON+"; charset=utf-8")
 	public Response getTables() {
 		List<Table> tables = GlobalCache.getTables();
 		ObjectMapper mapper = new ObjectMapper();
 		String value = null;
 		try {
 			value = mapper.writeValueAsString(tables);
+			System.out.println(value);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return Response.serverError().build();
@@ -54,10 +55,10 @@ public class DataFeeds {
 	@GET
 	@Path("/tables/{tableName}/distinctValues")
     @Produces(MediaType.APPLICATION_JSON+"; charset=utf-8")
-	public Response getDistinctValues(@PathParam("tableName")String tableName, @QueryParam("dimName") List<String> DimList,
+	public Response getDistinctValues(@PathParam("tableName")String tableName, @QueryParam("dimList") List<String> dimList,
 		  @QueryParam("filter") String filter) {
         List<String> columnNames = new ArrayList<>();
-        columnNames.addAll(DimList);
+        columnNames.addAll(dimList);
         StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append(sqlGen.generateSelect(columnNames, true));
         queryBuilder.append(sqlGen.generateFrom(tableName));
@@ -78,10 +79,10 @@ public class DataFeeds {
 	@GET
 	@Path("/tables/{tableName}/query")
 	@Produces(MediaType.APPLICATION_JSON+"; charset=utf-8")
-	public Response query(@PathParam("tableName")String tableName, @QueryParam("dimList") List<String> DimList,
+	public Response query(@PathParam("tableName")String tableName, @QueryParam("dimList") List<String> dimList,
 		  @QueryParam("measureList") List<String> measureList, @QueryParam("filter") String filter) {
         List<String> columnNames = new ArrayList<>();
-        columnNames.addAll(DimList);
+        columnNames.addAll(dimList);
         columnNames.addAll(measureList);
         StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append(sqlGen.generateSelect(columnNames, false));
@@ -105,7 +106,7 @@ public class DataFeeds {
 	@POST
 	@Path("/tables/{tableName}/{DimList}/{changeList}/{filter}")
 	@Produces(MediaType.APPLICATION_JSON+"; charset=utf-8")
-	public String adjustValue(@PathParam("tableName")String tableName, @PathParam("DimList") List<String> DimList,
+	public String adjustValue(@PathParam("tableName")String tableName, @PathParam("dimList") List<String> dimList,
 		  @PathParam("changeList") List<String> changeList, @PathParam("filter") String filter) {
 	    return "{}";
 	}

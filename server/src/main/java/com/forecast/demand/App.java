@@ -73,8 +73,9 @@ public class App
         staticHolder.setInitParameter("resourceBase", "public");
         context.addServlet(staticHolder, "/home/*");
 
+        //if(XmlHelper.updateTableConfig("Resources/YumSalesForecast.xml")) System.out.println("####SUCCESS");
         GlobalCache.initialize();
-        System.out.println(GlobalCache.getTable("YumSalesForecast").getName());
+        //System.out.println(GlobalCache.getTable("YumSalesForecast").getName());
 
         try {
             server.start();

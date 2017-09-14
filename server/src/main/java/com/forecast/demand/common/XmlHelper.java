@@ -13,14 +13,15 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import org.w3c.dom.*;
+import org.xml.sax.InputSource;
 
 public class XmlHelper {
 
     public static boolean addNewTableConfig(String filepath) {
         String sql = "insert into TableMetadata (tablename, xmlconfig, owners, description) values (?, ?, ?, ?)";
         try {
-            String xmlContent = new String(Files.readAllBytes(Paths.get(filepath)));
-            Table table = readTableFromXmlConfig(filepath);
+            String xmlContent = new String(Files.readAllBytes(Paths.get(filepath)), "UTF-8");
+            Table table = readTableFromXmlConfig(xmlContent);
             DBHelper.runQuery(sql, new String[]{table.getName(), xmlContent, table.getOwners(), table.getDescription()},
                     new ColumnType[]{ColumnType.STRING, ColumnType.STRING, ColumnType.STRING, ColumnType.STRING});
         } catch (Exception ex) {
@@ -33,8 +34,8 @@ public class XmlHelper {
     public static boolean updateTableConfig(String filepath) {
         String sql = "update TableMetadata set xmlconfig= ?, owners = ? , description = ? where tablename = ?";
         try {
-            String xmlContent = new String(Files.readAllBytes(Paths.get(filepath)));
-            Table table = readTableFromXmlConfig(filepath);
+            String xmlContent = new String(Files.readAllBytes(Paths.get(filepath)),"UTF-8");
+            Table table = readTableFromXmlConfig(xmlContent);
             DBHelper.runQuery(sql, new String[]{xmlContent, table.getOwners(), table.getDescription(), table.getName()},
                     new ColumnType[]{ColumnType.STRING, ColumnType.STRING, ColumnType.STRING, ColumnType.STRING});
         } catch (Exception ex) {
@@ -57,8 +58,7 @@ public class XmlHelper {
             //File fXmlFile = new File(filepath);
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            InputStream inputStream = new ByteArrayInputStream(xmlContent.getBytes());
-
+            InputStream inputStream = new ByteArrayInputStream(xmlContent.getBytes("UTF-8"));
             Document doc = dBuilder.parse(inputStream);
 
             //optional, but recommended
@@ -70,10 +70,10 @@ public class XmlHelper {
             tableName = table.getElementsByTagName("name").item(0).getTextContent();
             description = table.getElementsByTagName("description").item(0).getTextContent();
 
-            System.out.println("Root element :" + table.getNodeName());
-            System.out.println("Name: " + tableName);
-            System.out.println("Owners: " + owners + "\n");
-            System.out.println("----------------------------");
+            //System.out.println("Root element :" + table.getNodeName());
+            //System.out.println("Name: " + tableName);
+            //System.out.println("Owners: " + owners + "\n");
+            //System.out.println("----------------------------");
 
             columns = getColumnsFromRoot(table);
             dimensions = getDimensionsFromRoot(table);
@@ -98,7 +98,7 @@ public class XmlHelper {
         for (int temp = 0; temp < dimensionList.getLength(); temp++) {
 
             Node nNode = dimensionList.item(temp);
-            System.out.println("\nCurrent Element :" + nNode.getNodeName());
+            //System.out.println("\nCurrent Element :" + nNode.getNodeName());
 
             if (nNode.getNodeType() == Node.ELEMENT_NODE) {
                 Element eElement = (Element) nNode;
@@ -111,7 +111,7 @@ public class XmlHelper {
                     if (lNode.getNodeType() == Node.ELEMENT_NODE) {
                         String level = lNode.getTextContent();
                         levels.add(level);
-                        System.out.println("Level: " + level);
+                        //System.out.println("Level: " + level);
                     }
                 }
                 Dimension dimension = new Dimension(dimensionName, levels);
@@ -130,7 +130,7 @@ public class XmlHelper {
 
             Node nNode = columnList.item(temp);
 
-            System.out.println("\nCurrent Element :" + nNode.getNodeName());
+            //System.out.println("\nCurrent Element :" + nNode.getNodeName());
 
             if (nNode.getNodeType() == Node.ELEMENT_NODE) {
 
@@ -143,11 +143,11 @@ public class XmlHelper {
                 boolean isMeasure = (isMeasureString==null||isMeasureString.trim().isEmpty()) ? false : Boolean.valueOf(isMeasureString);
                 boolean isEditable = (isEditableString==null||isEditableString.trim().isEmpty()) ? false : Boolean.valueOf(isEditableString);
 
-                System.out.println("columnName : " + columnName);
-                System.out.println("columnType : " + columnType);
-                System.out.println("displayName : " + displayName);
-                System.out.println("isMeasure : " + isMeasure);
-                System.out.println("isEditable: " + isEditable);
+                //System.out.println("columnName : " + columnName);
+                //System.out.println("columnType : " + columnType);
+                //System.out.println("displayName : " + displayName);
+                //System.out.println("isMeasure : " + isMeasure);
+                //System.out.println("isEditable: " + isEditable);
 
                 Column column = new Column(columnName, columnType, displayName, isMeasure, isEditable);
                 list.add(column);

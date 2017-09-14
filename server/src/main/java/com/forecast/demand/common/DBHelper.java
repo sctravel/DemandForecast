@@ -2,6 +2,7 @@ package com.forecast.demand.common;
 
 import com.forecast.demand.model.ColumnType;
 
+import java.io.UnsupportedEncodingException;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -80,12 +81,14 @@ public class DBHelper {
                     // Also there are many methods on the result set to return
                     //  the column as a particular type. Refer to the Sun documentation
                     //  for the list of valid conversions.
-                    list.add(rs.getString(i));
+                    list.add(new String(rs.getBytes(i),"UTF-8"));
                 }
                 result.add(list);
             }
 
         } catch (SQLException ex) {
+            ex.printStackTrace();
+        } catch (UnsupportedEncodingException ex) {
             ex.printStackTrace();
         } finally {
             if(rs!=null) {
