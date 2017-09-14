@@ -1,7 +1,11 @@
 package com.forecast.demand.common;
 
 import com.forecast.demand.model.ColumnType;
+import org.apache.commons.configuration2.Configuration;
+import org.apache.commons.configuration2.builder.fluent.Configurations;
+import org.apache.commons.configuration2.ex.ConfigurationException;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.sql.*;
 import java.time.LocalDate;
@@ -11,11 +15,44 @@ import java.util.List;
 
 public class DBHelper {
 
+    public static Connection getConnection() {
+        Connection connection = null;
+        try {
+            // Load the JDBC driver
+            String driverName = "com.mysql.jdbc.Driver"; // MySQL MM JDBC driver
+            Class.forName(driverName);
+
+            Configurations configs = new Configurations();
+            Configuration config = configs.properties(new File("config/forecastdemand.config"));
+            // access configuration properties
+            String dbHost = config.getString("database.host");
+            int dbPort = config.getInt("database.port");
+            String dbName = config.getString("database.dbname");
+            String dbUser = config.getString("database.user");
+            String dbPassword = config.getString("database.password", "secret");  // provide a default
+            long dbTimeout = config.getLong("database.timeout");
+            // Create a connection to the database
+            String url = "jdbc:mysql://" + dbHost + ":" + dbPort + "/" + dbName + "?useUnicode=true&characterEncoding=utf-8&connectTimeout="+dbTimeout; // a JDBC url
+            connection = DriverManager.getConnection(url, dbUser, dbPassword);
+        }   catch (ConfigurationException cex){
+            cex.printStackTrace();
+        }   catch (ClassNotFoundException e) {
+            // Could not find the database driver
+            e.printStackTrace();
+        } catch (SQLException e) {
+            // Could not connect to the database
+            e.printStackTrace();
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+        return connection;
+    }
+
     public static void runQuery(String query, String[] values, ColumnType[] types) {
         Connection connection = null;
         PreparedStatement preparedStmt = null;
         try {
-            connection = DBUtil.getConnection();
+            connection = getConnection();
             preparedStmt = connection.prepareStatement(query);
 
             int index = 0;
@@ -67,7 +104,7 @@ public class DBHelper {
         List<List<String>> result = new ArrayList<List<String>>();
         if(query==null||query.isEmpty()) return result;
         System.out.println("Query - " + query);
-        Connection connection = DBUtil.getConnection();
+        Connection connection = getConnection();
         Statement stmt = null;
         ResultSet rs = null;
         try{

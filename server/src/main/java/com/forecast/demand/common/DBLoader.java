@@ -60,41 +60,6 @@ public class DBLoader {
             e.printStackTrace();
         }
     }
-    
-    private String generateGetTableStatement(){
-    	String query = "show tables";
-    	return query; 
-    }
-    
-    public String getTables(){	
-    	StringBuffer result = new StringBuffer();
-        Connection connection = null;
-        try {
-            connection = DBUtil.getConnection();
-            String query = generateGetTableStatement();
-            PreparedStatement preparedStmt = connection.prepareStatement(query);
-
-            ResultSet rs = preparedStmt.executeQuery();
-            while (rs.next()) {
-                String tableName = rs.getString("Tables_in_Inventory");              
-                result.append(tableName);
-            }
-            
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-
-            if(connection!=null) {
-                try {
-                    connection.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    	
-    	return result.toString();
-    }
 
     public boolean loadDataFromFile(String filePath, String delimiter, String tableName, List<Column> columnList) {
 
@@ -104,7 +69,7 @@ public class DBLoader {
         PreparedStatement preparedStmt=null;
         try {
             br = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "UTF-8"));
-            connection = DBUtil.getConnection();
+            connection = DBHelper.getConnection();
             connection.setAutoCommit(false);
             String query = generateInsertStatement(tableName, columnList);
             preparedStmt = connection.prepareStatement(query);
