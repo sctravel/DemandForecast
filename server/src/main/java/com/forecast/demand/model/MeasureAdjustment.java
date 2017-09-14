@@ -7,7 +7,7 @@ import java.util.Map;
 public class MeasureAdjustment {
     private Map<String, String> dimensionValues;
     private String tableName, measureName;
-    private double newValue, oldValue;
+    private Double newValue, oldValue;
     //private Policy adjustPolicy
 
     public MeasureAdjustment(String tableName, Map<String, String> dimValues,
@@ -31,11 +31,11 @@ public class MeasureAdjustment {
         return measureName;
     }
 
-    public double getOldValue() {
+    public Double getOldValue() {
         return oldValue;
     }
 
-    public double getNewValue() {
+    public Double getNewValue() {
         return newValue;
     }
 }

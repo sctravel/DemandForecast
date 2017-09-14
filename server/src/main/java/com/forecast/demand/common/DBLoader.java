@@ -47,14 +47,14 @@ public class DBLoader {
             if(column.getType()==ColumnType.STRING) {
                 preparedStmt.setString (index+1, val);
             } else if(column.getType()==ColumnType.INTEGER) {
-                preparedStmt.setInt(index+1, val==null||val.isEmpty()? -1 :Integer.parseInt(val));
+                preparedStmt.setInt(index+1, val==null||val.isEmpty()? 0 :Integer.parseInt(val));
             } else if(column.getType()==ColumnType.BOOLEAN) {
                 preparedStmt.setBoolean(index+1, val==null||val.isEmpty() ? false : Boolean.valueOf(val));
             } else if(column.getType()==ColumnType.DATETIME) {
                 LocalDate date = val==null||val.isEmpty() ? null : DateTimeUtil.parseDateIndMMMyy(val, "-");
                 preparedStmt.setDate(index+1, date==null? java.sql.Date.valueOf("1900-01-01") :java.sql.Date.valueOf(date));
             } else if(column.getType()==ColumnType.DECIMAL) {
-                preparedStmt.setDouble(index+1, val==null||val.isEmpty()?-1:Double.parseDouble(val));
+                preparedStmt.setDouble(index+1, val==null||val.isEmpty()? 0 :Double.parseDouble(val));
             }
         } catch (SQLException e) {
             e.printStackTrace();
