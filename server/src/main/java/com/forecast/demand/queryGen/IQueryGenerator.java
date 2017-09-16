@@ -10,4 +10,5 @@ public interface IQueryGenerator {
     String generateSelect(List<String> columnNames, boolean isDistinct);
     String generateFrom(String tableName);
     String generateWhere(String filter);
+    String generateWhere(List<Filter> filters);
 }

@@ -24,8 +24,9 @@ public class GlobalCache {
         if(tableCache.containsKey(tableName)) {
             return tableCache.get(tableName);
         } else {
-            Table table = XmlHelper.readTableFromXmlConfig("Resources/" + tableName + ".xml");
-            tableCache.put(tableName, table);
+            //TODO refine this logic, if not found in DB, search in the resources folder for xml file
+            Table table = XmlHelper.readTableFromXmlConfigFile("Resources/" + tableName + ".xml");
+            if(table!=null) tableCache.put(tableName, table);
             return table;
         }
     }

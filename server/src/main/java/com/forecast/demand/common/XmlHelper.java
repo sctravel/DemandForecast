@@ -17,10 +17,10 @@ import org.xml.sax.InputSource;
 
 public class XmlHelper {
 
-    public static boolean addNewTableConfig(String filepath) {
+    public static boolean addNewTableConfig(String xmlFilePath) {
         String sql = "insert into TableMetadata (tablename, xmlconfig, owners, description) values (?, ?, ?, ?)";
         try {
-            String xmlContent = new String(Files.readAllBytes(Paths.get(filepath)), "UTF-8");
+            String xmlContent = new String(Files.readAllBytes(Paths.get(xmlFilePath)), "UTF-8");
             Table table = readTableFromXmlConfig(xmlContent);
             DBHelper.runQuery(sql, new String[]{table.getName(), xmlContent, table.getOwners(), table.getDescription()},
                     new ColumnType[]{ColumnType.STRING, ColumnType.STRING, ColumnType.STRING, ColumnType.STRING});
@@ -31,10 +31,10 @@ public class XmlHelper {
         return true;
     }
 
-    public static boolean updateTableConfig(String filepath) {
+    public static boolean updateTableConfig(String xmlFilePath) {
         String sql = "update TableMetadata set xmlconfig= ?, owners = ? , description = ? where tablename = ?";
         try {
-            String xmlContent = new String(Files.readAllBytes(Paths.get(filepath)),"UTF-8");
+            String xmlContent = new String(Files.readAllBytes(Paths.get(xmlFilePath)), "UTF-8");
             Table table = readTableFromXmlConfig(xmlContent);
             DBHelper.runQuery(sql, new String[]{xmlContent, table.getOwners(), table.getDescription(), table.getName()},
                     new ColumnType[]{ColumnType.STRING, ColumnType.STRING, ColumnType.STRING, ColumnType.STRING});
@@ -43,6 +43,17 @@ public class XmlHelper {
             return false;
         }
         return true;
+    }
+
+    public static Table readTableFromXmlConfigFile(String xmlFilePath) {
+        Table table = null;
+        try {
+            String xmlContent = new String(Files.readAllBytes(Paths.get(xmlFilePath)), "UTF-8");
+            table = readTableFromXmlConfig(xmlContent);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return table;
     }
 
     public static Table readTableFromXmlConfig(String xmlContent) {
@@ -90,6 +101,7 @@ public class XmlHelper {
 
         return new Table(tableName, owners, columns, dimensions, measureColumnNames, description);
     }
+
 
     private static List<Dimension> getDimensionsFromRoot(Element root) {
         List<Dimension> list = new ArrayList<>();

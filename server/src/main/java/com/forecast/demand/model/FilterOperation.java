@@ -6,5 +6,6 @@ public enum FilterOperation {
     GREATEREQUAL,
     LESS,
     LESSEQUAL,
-    NOTEQUAL
+    NOTEQUAL,
+    IN
 }
