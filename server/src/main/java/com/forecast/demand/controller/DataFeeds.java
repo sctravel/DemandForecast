@@ -9,6 +9,7 @@ import com.forecast.demand.queryGen.SQLQueryGenerator;
 import com.forecast.demand.queryGen.IQueryGenerator;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.ws.rs.*;
@@ -55,7 +56,7 @@ public class DataFeeds {
 	@GET
 	@Path("/tables/{tableName}/distinctValues")
     @Produces(MediaType.APPLICATION_JSON+"; charset=utf-8")
-	public Response getDistinctValues(@PathParam("tableName")String tableName, @QueryParam("dimList") List<String> dimList,
+	public Response getDistinctValues(@PathParam("tableName")String tableName, @QueryParam("dimList") List<String> dimList,@QueryParam("dimType") String dimType,@QueryParam("dimLevel") String dimLevel,@QueryParam("Levels") String Levels,
 		  @QueryParam("filter") String filter) {
         List<String> columnNames = new ArrayList<>();
         columnNames.addAll(dimList);
@@ -64,11 +65,24 @@ public class DataFeeds {
         queryBuilder.append(sqlGen.generateFrom(tableName));
         if(filter!=null&&!filter.trim().isEmpty()) queryBuilder.append(sqlGen.generateWhere(filter));
         List<List<String>> res = DBHelper.getQueryResult(queryBuilder.toString());
+        List<String> dt = new LinkedList<String>() ;
+		List<String> dl = new LinkedList<String>() ;
+		List<String> le = new LinkedList<String>() ;
+
+		le.add(Levels);
+		dl.add(dimLevel);
+        dt.add(dimType);
+		res.add(le);
+		res.add(dl);
+        res.add(dt);
 
         ObjectMapper mapper = new ObjectMapper();
         String value = null;
         try {
             value = mapper.writeValueAsString(res);
+            System.out.println(value);
+
+
         } catch (Exception e) {
             e.printStackTrace();
             return Response.serverError().build();

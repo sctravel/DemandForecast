@@ -93,8 +93,7 @@
                                 <div class="panel-heading"><i class="glyphicon"></i>Dimensions</div>
                                 <div class="panel-body">
                                     <div id="dimensions" js-tree="vm.treeConfig" should-apply="vm.applyModelChanges()"
-                                         ng-model="vm.treeData" tree="vm.treeInstanceDimensions"
-                                         tree-events="ready:vm.readyCB;create_node:vm.createCB"></div>
+                                         ng-model="vm.treeData" tree="vm.treeInstanceDimensions" tree-events="open_node:open_nodeCB;before_open: before_openCB"></div>
                                 </div>
                             </div>
                         </div>
@@ -106,8 +105,7 @@
                                 <div class="panel-heading"><i class="glyphicon"></i>Measures</div>
                                 <div class="panel-body">
                                     <div id="measures" js-tree="vm.treeConfig" should-apply="vm.applyModelChanges()"
-                                         ng-model="vm.measureData" tree="vm.treeInstanceMeasures"
-                                         tree-events="ready:vm.readyCB;create_node:vm.createCB"></div>
+                                         ng-model="vm.measureData" tree="vm.treeInstanceMeasures"></div>
                                 </div>
                             </div>
                         </div>
