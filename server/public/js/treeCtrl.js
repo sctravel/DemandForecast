@@ -2,7 +2,60 @@
 
 
     //// JavaScript Code ////
-    function treeCtrl($scope,$log, $timeout,$http, toaster) {
+    function treeCtrl($scope,$log, $timeout,$http, toaster,$q) {
+      $scope.data = {ready:false};
+      $scope.gridOptions = {};
+      $scope.gridOptions.columnDefs = [
+            { name:'id'  },
+            { name:'name',  pinnedLeft:true },
+            { name:'age',  pinnedRight:true  },
+            { name:'address.street'  },
+            { name:'address.city'},
+            { name:'address.state' },
+            { name:'address.zip' },
+            { name:'company' },
+            { name:'email' },
+            { name:'phone' },
+            { name:'about' },
+            { name:'friends[0].name', displayName:'1st friend'},
+            { name:'friends[1].name', displayName:'2nd friend' },
+            { name:'friends[2].name', displayName:'3rd friend' },
+          ];
+
+        $http.get('https://cdn.rawgit.com/angular-ui/ui-grid.info/gh-pages/data/500_complex.json').then(function getSuccess(response)  {
+            for(i = 0; i < response.data.length; i++){
+              response.data[i].registered = new Date(response.data[i].registered);
+            }
+
+            $scope.gridOptions.data = response.data;
+
+        });
+         $scope.msg = {};
+
+   $scope.gridOptions.onRegisterApi = function(gridApi){
+                  //set gridApi on scope
+                  $scope.gridApi = gridApi;
+                  gridApi.rowEdit.on.saveRow($scope, $scope.saveRow);
+                  gridApi.edit.on.afterCellEdit($scope,function(rowEntity, colDef, newValue, oldValue){
+                    $scope.msg.lastCellEdited = 'edited row id:' + rowEntity.id + ' Column:' + colDef.name + ' newValue:' + newValue + ' oldValue:' + oldValue ;
+                    $scope.$apply();
+                  });
+                };
+   $scope.saveRow = function( rowEntity ) {
+     // create a fake promise - normally you'd use the promise returned by $http or $resource
+
+     var promise = $q.defer();
+     $scope.gridApi.rowEdit.setSavePromise( rowEntity, promise.promise );
+
+     // fake a delay of 3 seconds whilst the save occurs, return error if gender is "male"
+//     $interval( function() {
+//       if (rowEntity.gender === 'male' ){
+//         promise.reject();
+//       } else {
+//         promise.resolve();
+//       }
+//     }, 3000, 1);
+   };
         var vm = this;
         var newId = 1;
         vm.ignoreChanges = false;
@@ -114,8 +167,7 @@
         $scope.open_nodeCB = function(node,selected){
         }
 
-        this.query = function () {
-         
+        $scope.query = function () {
             var selectedDimensions = vm.treeInstanceDimensions.jstree(true).get_selected();
             for(var i = 0; i < selectedDimensions.length;i++){
                 var dimension = selectedDimensions[i];
@@ -124,6 +176,7 @@
                 }
             }
             var selectedMeasures = vm.treeInstanceMeasures.jstree(true).get_selected();
+            $scope.data.ready = true;
             console.dir(selectedDimensions);
             console.dir(selectedMeasures);
         }

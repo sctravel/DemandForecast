@@ -10,6 +10,7 @@
     <!-- Bootstrap Core CSS -->
     <link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <!-- Custom CSS -->
+    <link href="css/metisMenu.css" rel="stylesheet">
     <link href="css/sb-admin-2.css" rel="stylesheet"/>
     <!-- Morris Charts CSS -->
     <link href="css/plugins/morris.css" rel="stylesheet">
@@ -17,18 +18,10 @@
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
     <link href="css/jsTree/themes/default/style.min.css" rel="stylesheet"/>
     <link href="css/toaster.css" rel="stylesheet"/>
-    <link href="css/angular-busy.css" rel="stylesheet"/>
-    <style>
-        body {
-            padding-top: 50px;
-        }
+
+    <link href="css/ui-grid.css" rel="stylesheet"/>
 
 
-
-
-
-
-    </style>
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -50,25 +43,33 @@
     <script src="js/ngJsTree.min.js"></script>
     <script src="js/app.js"></script>
     <script src="js/treeCtrl.js"></script>
-
+    <script src="js/metisMenu.js"></script>
+    <script src="js/sb-admin-2.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-touch.js"></script>
+    <script src="js/ui-grid.js"></script>
+<style>
+   .grid {
+            height:800px;
+        }
+</style>
 
 </head>
 <body ng-app="ngJsTreeDemo">
-<div id="wrapper">
+<div id="wrapper" ng-controller="treeCtrl as vm">
     <!-- Navigation -->
-    <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+    <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0;background-color : #1976D2">
         <div class="navbar-header">
-            <a class="navbar-brand" href="index.html">Forcasting Tools Demo</a>
+            <a class="navbar-brand" href="index.html" style="color:#ffffff"><b>Forcasting Tools Demo</b></a>
         </div>
         <!-- /.navbar-header -->
         <ul class="nav navbar-top-links navbar-right">
-            <li class="dropdown">
+            <li class="dropdown"  style="background-color: #ffffff">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                     <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
                 </a>
                 <ul class="dropdown-menu dropdown-user">
                     <li>
-                        <a href="#"><i class="fa fa-user fa-fw"></i> User Profile</a>
+                        <a href="#" style="color:#ffffff"><i class="fa fa-user fa-fw"></i> User Profile</a>
                     </li>
                     <li>
                         <a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
@@ -83,7 +84,7 @@
             <!-- /.dropdown -->
         </ul>
         <!-- /.navbar-top-links -->
-        <div class="navbar-default sidebar" role="navigation" ng-controller="treeCtrl as vm">
+        <div class="navbar-default sidebar" role="navigation" >
             <div class="sidebar-nav navbar-collapse">
                 <ul class="nav" id="side-menu">
                     <li>
@@ -110,7 +111,7 @@
                             </div>
                         </div>
                     </li>
-                    <li><a href="#" class="btn btn-default btn-block" ng-click="vm.query()">查询</a></li>
+                    <li><a href="#" class="btn btn-default btn-block" ng-click="query()">查询</a></li>
                 </ul>
             </div>
             <!-- /.sidebar-collapse -->
@@ -123,6 +124,12 @@
                 <h1 class="page-header">查询结果</h1>
             </div>
             <!-- /.col-lg-12 -->
+        </div>
+        <div class="row"  ng-show="data.ready" >
+               <br>
+               <strong>Last Cell Edited:</strong> {{msg.lastCellEdited}}
+               <br>
+               <div id="table-wrapper" ui-grid="gridOptions" class="grid,panel-body" ui-grid-auto-resize ui-grid-edit ui-grid-row-edit ui-grid-cellNav ></div>
         </div>
 
         <!-- /.row -->

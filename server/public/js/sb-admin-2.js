@@ -27,6 +27,7 @@ $(function() {
         if (height > topOffset) {
             $("#page-wrapper").css("min-height", (height) + "px");
         }
+         $("#table-wrapper").css("min-height", (height/2) + "px");
     });
 
     var url = window.location;
