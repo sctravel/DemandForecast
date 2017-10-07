@@ -5,32 +5,8 @@
     function treeCtrl($scope,$log, $timeout,$http, toaster,$q) {
       $scope.data = {ready:false};
       $scope.gridOptions = {};
-      $scope.gridOptions.columnDefs = [
-            { name:'id'  },
-            { name:'name',  pinnedLeft:true },
-            { name:'age',  pinnedRight:true  },
-            { name:'address.street'  },
-            { name:'address.city'},
-            { name:'address.state' },
-            { name:'address.zip' },
-            { name:'company' },
-            { name:'email' },
-            { name:'phone' },
-            { name:'about' },
-            { name:'friends[0].name', displayName:'1st friend'},
-            { name:'friends[1].name', displayName:'2nd friend' },
-            { name:'friends[2].name', displayName:'3rd friend' },
-          ];
-
-        $http.get('https://cdn.rawgit.com/angular-ui/ui-grid.info/gh-pages/data/500_complex.json').then(function getSuccess(response)  {
-            for(i = 0; i < response.data.length; i++){
-              response.data[i].registered = new Date(response.data[i].registered);
-            }
-
-            $scope.gridOptions.data = response.data;
-
-        });
-         $scope.msg = {};
+      $scope.gridOptions.columnDefs = [];
+      $scope.msg = {};
 
    $scope.gridOptions.onRegisterApi = function(gridApi){
                   //set gridApi on scope
@@ -56,7 +32,7 @@
 //       }
 //     }, 3000, 1);
    };
-        var vm = this;
+         vm = this;
         var newId = 1;
         vm.ignoreChanges = false;
         vm.newNode = {};
@@ -98,6 +74,7 @@
                    vm.treeData.push({ id: dimensions[index].name, parent: '#', text: dimensions[index].name, state: { opened: false } });
                    var levelUrl = '/data/tables/YumSalesForecast/distinctValues?dimList=' + dimensions[index].levels[0];
                    levelUrl = levelUrl + "&dimType=" + dimensions[index].name + "&dimLevel=" + dimensions[index].levels[0] + "&Levels=" + levels ;
+                   console.log(levelUrl);
 
                    $http.get(levelUrl).then(function getSuccess(response) {
                                var dimType = response.data[response.data.length-1];
@@ -168,6 +145,10 @@
         }
 
         $scope.query = function () {
+         console.log("in");
+         $scope.gridOptions.columnDefs=[];
+          var queryUrl = "/data/tables/YumSalesForecast/query?";
+            var treeInstance = vm.treeInstanceDimensions.jstree(true);
             var selectedDimensions = vm.treeInstanceDimensions.jstree(true).get_selected();
             for(var i = 0; i < selectedDimensions.length;i++){
                 var dimension = selectedDimensions[i];
@@ -176,9 +157,72 @@
                 }
             }
             var selectedMeasures = vm.treeInstanceMeasures.jstree(true).get_selected();
+
+            var dimlist = "";
+            var filter ="";
+            var measureList = "";
+            var filter_infos = {};
+            for(var i=0; i < selectedDimensions.length;i++){
+                 selected_node = treeInstance.get_node(selectedDimensions[i]);
+                 if(selected_node.id.indexOf("_") < 0){
+                    continue;
+                 }
+                 infos = selected_node.id.split("_");
+                 dimension_name = infos[0];
+                 dimension_level = infos[1];
+                 level_struc = infos[2].split(",");
+                 dimension_path =  level_struc.slice(0,level_struc.indexOf(dimension_level)+1);
+                 for(var j = 0; j < dimension_path.length;j++){
+                    if(dimlist.indexOf(dimension_path[j]) > -1) continue;
+                    dimlist = dimlist + dimension_path[j] + ",";
+                   var gridOption = {name : dimension_path[j]};
+                   $scope.gridOptions.columnDefs.push(gridOption);
+                 }
+
+                 if(filter_infos[dimension_level] == undefined){
+                    filter_infos[dimension_level] =[];
+                    filter_infos[dimension_level].push(dimension_name);
+                 }else{
+                    filter_infos[dimension_level].push(dimension_name);
+                 }
+         }
+            dimlist = dimlist.substring(0,dimlist.length-1);
+
+            for(var i = 0; i < selectedMeasures.length; i++) {
+               measureList = measureList + selectedMeasures[i] + ",";
+               var gridOption = {name : selectedMeasures[i]};
+               $scope.gridOptions.columnDefs.push(gridOption);
+
+            }
+            measureList = measureList.substring(0,measureList.length-1);
+
+             for(var prop in filter_infos){
+
+                            var tmp = "";
+                            var vals = filter_infos[prop];
+
+                            for(var v in vals){
+                                tmp = tmp + prop + "=" + '"' + vals[v] + '"' + " or ";
+                            }
+                            tmp= tmp.substring(0,tmp.length-4);
+                            tmp = "(" + tmp + ")";
+                            filter = filter + tmp + " and ";
+                        }
+            filter= filter.substring(0,filter.length-5);
+
+            url = "/data/tables/YumSalesForecast/query?dimList=" + dimlist + "&measureList=" + measureList + "&filter=" + filter;
+            console.log(url);
+            $http.get(url).then(function getSuccess(response)  {
+             console.dir(response.data);
+                for(i = 0; i < response.data.length; i++){
+                  response.data[i].registered = new Date(response.data[i].registered);
+                }
+
+                $scope.gridOptions.data = response.data;
+
+            });
             $scope.data.ready = true;
-            console.dir(selectedDimensions);
-            console.dir(selectedMeasures);
+
         }
     }
 
