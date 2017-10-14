@@ -1,6 +1,9 @@
 package com.forecast.demand.model;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 /**
  * Created by tuxi1 on 8/30/2017.
  */
@@ -40,5 +43,13 @@ public class Table {
     public List<Dimension> getDimensions() { return this.dimensions; }
 
     public List<String> getMeasureColumnNames() { return this.measureColumnNames; }
+
+    public Map<String, Column> getColumnMap() {
+        Map<String, Column> map = new HashMap<>();
+        for(Column c : columns) {
+            map.put(c.getName(), c);
+        }
+        return map;
+    }
 
 }

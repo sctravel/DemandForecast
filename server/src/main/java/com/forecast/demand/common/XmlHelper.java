@@ -1,9 +1,6 @@
 package com.forecast.demand.common;
 
-import com.forecast.demand.model.Column;
-import com.forecast.demand.model.ColumnType;
-import com.forecast.demand.model.Dimension;
-import com.forecast.demand.model.Table;
+import com.forecast.demand.model.*;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -116,6 +113,7 @@ public class XmlHelper {
                 Element eElement = (Element) nNode;
                 List<String> levels = new ArrayList<>();
                 String dimensionName = eElement.getElementsByTagName("name").item(0).getTextContent();
+                String dimensionDisplayName = eElement.getElementsByTagName("displayName").item(0).getTextContent();
                 Node levelsNode = eElement.getElementsByTagName("levels").item(0);
                 NodeList levelList = levelsNode.getChildNodes();
                 for (int i = 0; i < levelList.getLength(); i++) {
@@ -126,7 +124,7 @@ public class XmlHelper {
                         //System.out.println("Level: " + level);
                     }
                 }
-                Dimension dimension = new Dimension(dimensionName, levels);
+                Dimension dimension = new Dimension(dimensionName, dimensionDisplayName, levels);
                 list.add(dimension);
             }
         }
@@ -148,20 +146,22 @@ public class XmlHelper {
 
                 Element eElement = (Element) nNode;
                 String columnName = eElement.getElementsByTagName("name").item(0).getTextContent();
-                String columnType = eElement.getElementsByTagName("type").item(0).getTextContent();
+                String columnTypeString = eElement.getElementsByTagName("type").item(0).getTextContent();
+                System.out.println("columnName : " + columnTypeString);
+                ColumnType columnType = StringUtil.searchEnum(ColumnType.class, columnTypeString);
+
                 String displayName = eElement.getElementsByTagName("displayName").item(0).getTextContent();
                 String isMeasureString = eElement.getElementsByTagName("isMeasure").getLength()==0?null:eElement.getElementsByTagName("isMeasure").item(0).getTextContent();
                 String isEditableString = eElement.getElementsByTagName("isEditable").getLength()==0?null:eElement.getElementsByTagName("isEditable").item(0).getTextContent();
+                String aggregationTypeString = eElement.getElementsByTagName("aggregationType").getLength()==0?null:eElement.getElementsByTagName("aggregationType").item(0).getTextContent();
                 boolean isMeasure = (isMeasureString==null||isMeasureString.trim().isEmpty()) ? false : Boolean.valueOf(isMeasureString);
                 boolean isEditable = (isEditableString==null||isEditableString.trim().isEmpty()) ? false : Boolean.valueOf(isEditableString);
-
-                //System.out.println("columnName : " + columnName);
+                AggregationType aggregationType = (aggregationTypeString==null||aggregationTypeString.trim().isEmpty()) ? AggregationType.SUM : StringUtil.searchEnum(AggregationType.class, aggregationTypeString);
                 //System.out.println("columnType : " + columnType);
                 //System.out.println("displayName : " + displayName);
                 //System.out.println("isMeasure : " + isMeasure);
                 //System.out.println("isEditable: " + isEditable);
-
-                Column column = new Column(columnName, columnType, displayName, isMeasure, isEditable);
+                Column column = new Column(columnName, columnType, displayName, isMeasure, isEditable, aggregationType);
                 list.add(column);
             }
         }

@@ -98,15 +98,19 @@ public class DataFeeds {
         List<String> dimList = Arrays.asList(dimListString.split(","));
 		List<String> measureList = Arrays.asList(measureListString.split(","));
 
+		Table table = GlobalCache.getTable(tableName);
+		Map<String, Column> columnMap = table.getColumnMap();
+
         columnNames.addAll(dimList);
-        //TODO add feature to specify the aggregator (e.g. SUM, AVG, etc.) by user
         for(String measure : measureList) {
-        	columnNames.add("SUM("+measure+")");
+        	columnNames.add( columnMap.get(measure).getAggregationType().toString() +"("+measure+")");
 		}
+
         StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append(sqlGen.generateSelect(columnNames, false));
         queryBuilder.append(sqlGen.generateFrom(tableName));
         if(filter!=null&&!filter.trim().isEmpty()) queryBuilder.append(sqlGen.generateWhere(filter));
+
 		queryBuilder.append(sqlGen.generateGroupBy(dimList));
 
         String query = queryBuilder.toString();

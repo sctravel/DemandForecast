@@ -59,12 +59,14 @@
             <type>Integer</type>
             <displayName>历史SR</displayName>
             <isMeasure>true</isMeasure>
+            <aggregationType>sum</aggregationType>
         </column>
         <column>
             <name>ForecastSalesNumber</name>
             <type>Integer</type>
             <displayName>SR预测</displayName>
             <isMeasure>true</isMeasure>
+            <aggregationType>sum</aggregationType>
         </column>
         <column>
             <name>MarketingAdjustment</name>
@@ -72,6 +74,7 @@
             <displayName>Category与Marketing调整</displayName>
             <isMeasure>true</isMeasure>
             <isEditable>true</isEditable>
+            <aggregationType>sum</aggregationType>
         </column>
         <column>
             <name>DemandPlannerAdjustment</name>
@@ -79,12 +82,14 @@
             <displayName>Demand Planner 调整</displayName>
             <isMeasure>true</isMeasure>
             <isEditable>true</isEditable>
+            <aggregationType>sum</aggregationType>
         </column>
         <column>
             <name>ConsensusForecast</name>
             <type>Integer</type>
             <displayName>Consensus Forecast</displayName>
             <isMeasure>true</isMeasure>
+            <aggregationType>sum</aggregationType>
         </column>
     </columns>
     <!-- Dimension Column should always be String type-->
