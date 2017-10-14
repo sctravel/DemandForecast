@@ -37,7 +37,6 @@ public class App
 {
     public static void main( String[] args )
     {
-
     	ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
     	Server server = new Server();
@@ -86,6 +85,6 @@ public class App
         }
 
         //Initialize Global Cache for all Table Config
-
+        //XmlHelper.updateTableConfig("resources/YumSalesForecast.xml");
     }
 }

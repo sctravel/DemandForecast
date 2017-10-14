@@ -1,5 +1,7 @@
 package com.forecast.demand.model;
 
+import com.forecast.demand.common.StringUtil;
+
 import java.util.List;
 
 public class Filter {
@@ -10,9 +12,9 @@ public class Filter {
 
     public Filter(String columnName, String columnType, List<String> values, String operation) {
         this.columnName = columnName;
-        this.columnType = ColumnType.valueOf(columnType);
+        this.columnType = StringUtil.searchEnum(ColumnType.class, columnType);
         this.values = values;
-        this.operation = FilterOperation.valueOf(operation);
+        this.operation = StringUtil.searchEnum(FilterOperation.class, operation);
     }
 
     public String getColumnName() {

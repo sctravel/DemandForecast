@@ -59,12 +59,14 @@
             <type>Integer</type>
             <displayName>历史SR</displayName>
             <isMeasure>true</isMeasure>
+            <aggregationType>sum</aggregationType>
         </column>
         <column>
             <name>ForecastSalesNumber</name>
             <type>Integer</type>
             <displayName>SR预测</displayName>
             <isMeasure>true</isMeasure>
+            <aggregationType>sum</aggregationType>
         </column>
         <column>
             <name>MarketingAdjustment</name>
@@ -72,6 +74,7 @@
             <displayName>Category与Marketing调整</displayName>
             <isMeasure>true</isMeasure>
             <isEditable>true</isEditable>
+            <aggregationType>sum</aggregationType>
         </column>
         <column>
             <name>DemandPlannerAdjustment</name>
@@ -79,18 +82,21 @@
             <displayName>Demand Planner 调整</displayName>
             <isMeasure>true</isMeasure>
             <isEditable>true</isEditable>
+            <aggregationType>sum</aggregationType>
         </column>
         <column>
             <name>ConsensusForecast</name>
             <type>Integer</type>
             <displayName>Consensus Forecast</displayName>
             <isMeasure>true</isMeasure>
+            <aggregationType>sum</aggregationType>
         </column>
     </columns>
     <!-- Dimension Column should always be String type-->
     <dimensions>
         <dimension>
             <name>Location</name>
+            <displayName>地点</displayName>
             <levels>
                 <level>District</level>
                 <level>Province</level>
@@ -100,6 +106,7 @@
         </dimension>
         <dimension>
             <name>ItemType</name>
+            <displayName>物品类型</displayName>
             <levels>
                 <level>Category</level>
                 <level>Subcategory</level>
@@ -109,6 +116,7 @@
         </dimension>
         <dimension>
             <name>DateTime</name>
+            <displayName>年月日</displayName>
             <levels>
                 <level>Year(SalesDate)</level>
                 <level>Month(SalesDate)</level>
@@ -117,6 +125,7 @@
         </dimension>
         <dimension>
             <name>DateTimeInWeek</name>
+            <displayName>年周日</displayName>
             <levels>
                 <level>Year(SalesDate)</level>
                 <level>Week(SalesDate)</level>

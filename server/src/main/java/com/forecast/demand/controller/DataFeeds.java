@@ -98,12 +98,21 @@ public class DataFeeds {
         List<String> dimList = Arrays.asList(dimListString.split(","));
 		List<String> measureList = Arrays.asList(measureListString.split(","));
 
+		Table table = GlobalCache.getTable(tableName);
+		Map<String, Column> columnMap = table.getColumnMap();
+
         columnNames.addAll(dimList);
-        columnNames.addAll(measureList);
+        for(String measure : measureList) {
+        	columnNames.add( columnMap.get(measure).getAggregationType().toString() +"("+measure+")");
+		}
+
         StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append(sqlGen.generateSelect(columnNames, false));
         queryBuilder.append(sqlGen.generateFrom(tableName));
         if(filter!=null&&!filter.trim().isEmpty()) queryBuilder.append(sqlGen.generateWhere(filter));
+
+		queryBuilder.append(sqlGen.generateGroupBy(dimList));
+
         String query = queryBuilder.toString();
         List<List<String>> queryResult = DBHelper.getQueryResult(query);
 		List<Map<String, String>> res = new ArrayList<Map<String, String>>();
