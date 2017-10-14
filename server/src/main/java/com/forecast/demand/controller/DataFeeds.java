@@ -99,11 +99,16 @@ public class DataFeeds {
 		List<String> measureList = Arrays.asList(measureListString.split(","));
 
         columnNames.addAll(dimList);
-        columnNames.addAll(measureList);
+        //TODO add feature to specify the aggregator (e.g. SUM, AVG, etc.) by user
+        for(String measure : measureList) {
+        	columnNames.add("SUM("+measure+")");
+		}
         StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append(sqlGen.generateSelect(columnNames, false));
         queryBuilder.append(sqlGen.generateFrom(tableName));
         if(filter!=null&&!filter.trim().isEmpty()) queryBuilder.append(sqlGen.generateWhere(filter));
+		queryBuilder.append(sqlGen.generateGroupBy(dimList));
+
         String query = queryBuilder.toString();
         List<List<String>> queryResult = DBHelper.getQueryResult(query);
 		List<Map<String, String>> res = new ArrayList<Map<String, String>>();

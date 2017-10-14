@@ -91,6 +91,7 @@
     <dimensions>
         <dimension>
             <name>Location</name>
+            <displayName>地点</displayName>
             <levels>
                 <level>District</level>
                 <level>Province</level>
@@ -100,6 +101,7 @@
         </dimension>
         <dimension>
             <name>ItemType</name>
+            <displayName>物品类型</displayName>
             <levels>
                 <level>Category</level>
                 <level>Subcategory</level>
@@ -109,6 +111,7 @@
         </dimension>
         <dimension>
             <name>DateTime</name>
+            <displayName>年月日</displayName>
             <levels>
                 <level>Year(SalesDate)</level>
                 <level>Month(SalesDate)</level>
@@ -117,6 +120,7 @@
         </dimension>
         <dimension>
             <name>DateTimeInWeek</name>
+            <displayName>年周日</displayName>
             <levels>
                 <level>Year(SalesDate)</level>
                 <level>Week(SalesDate)</level>

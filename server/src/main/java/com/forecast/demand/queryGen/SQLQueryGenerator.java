@@ -44,6 +44,35 @@ public class SQLQueryGenerator implements IQueryGenerator{
         return sb.toString();
     }
 
+    public String generateGroupBy(List<String> columnNames) {
+        if(columnNames==null||columnNames.isEmpty()) return "";
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(" GROUP BY ");
+        for(String name : columnNames) {
+            sb.append("\n " + name + ",");
+        }
+        sb.deleteCharAt(sb.length()-1);
+        sb.append(" ");
+        return sb.toString();
+    }
+
+    //May need Pair<ColumnName, isDesc> in future.
+    public String generateOrderBy(List<String> columnNames, boolean isDesc) {
+        if(columnNames==null||columnNames.isEmpty()) return "";
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(" Order BY ");
+        for(String name : columnNames) {
+            sb.append("\n " + name);
+            if(isDesc) sb.append(" DESC ");
+            sb.append(",");
+        }
+        sb.deleteCharAt(sb.length()-1);
+        sb.append(" ");
+        return sb.toString();
+    }
+
     private String getValue(String value, ColumnType type) {
         if(type==ColumnType.DATETIME || type==ColumnType.STRING) {
             return "'"+value+"'";
