@@ -8,21 +8,57 @@
       $scope.gridOptions.columnDefs = [];
       $scope.msg = {};
 
+      $scope.changeList = {};
+      $scope.changeKeys = [];
+
    $scope.gridOptions.onRegisterApi = function(gridApi){
                   //set gridApi on scope
                   $scope.gridApi = gridApi;
-                  gridApi.rowEdit.on.saveRow($scope, $scope.saveRow);
+                 // gridApi.rowEdit.on.saveRow($scope, $scope.saveRow);
                   gridApi.edit.on.afterCellEdit($scope,function(rowEntity, colDef, newValue, oldValue){
-                    $scope.msg.lastCellEdited = 'edited row id:' + rowEntity.id + ' Column:' + colDef.name + ' newValue:' + newValue + ' oldValue:' + oldValue ;
-                    $scope.$apply();
+                     var currChange ={};
+                     currChange.key = rowEntity.$$hashKey+ "_" + colDef.name;
+                     if($scope.changeKeys.indexOf(currChange.key) > -1) {
+                         $scope.changeList[currChange.key].time = Math.floor(Date.now() / 1000);
+                         $scope.changeList[currChange.key].newValue = newValue;
+                         $scope.changeList[currChange.key].oldValue = oldValue;
+                     }else{
+                         currChange.time = Math.floor(Date.now() / 1000);
+                         currChange.column = colDef.name;
+                         currChange.newValue = newValue;
+                         currChange.oldValue = oldValue;
+                         currChange.schema = $scope.gridOptions.columnDefs;
+                         $scope.changeKeys.push(currChange.key);
+                         $scope.changeList[currChange.key] = currChange;
+
+                     }
+                     $scope.$apply();
                   });
                 };
-   $scope.saveRow = function( rowEntity ) {
+
+   $scope.save = function(){
+        if($scope.changeKeys.length == 0){
+            alert("No change will be submitted");
+        }else{
+            //$http.post to backend
+        }
+
+   }
+
+
+
+
+
+
+
+
+//   $scope.saveRow = function() {
      // create a fake promise - normally you'd use the promise returned by $http or $resource
-
-     var promise = $q.defer();
-     $scope.gridApi.rowEdit.setSavePromise( rowEntity, promise.promise );
-
+//     console.log("in save");
+//
+//     var promise = $q.defer();
+//     $scope.gridApi.rowEdit.setSavePromise( rowEntity, promise.promise );
+//
      // fake a delay of 3 seconds whilst the save occurs, return error if gender is "male"
 //     $interval( function() {
 //       if (rowEntity.gender === 'male' ){
@@ -31,7 +67,7 @@
 //         promise.resolve();
 //       }
 //     }, 3000, 1);
-   };
+//   };
          vm = this;
         var newId = 1;
         vm.ignoreChanges = false;
