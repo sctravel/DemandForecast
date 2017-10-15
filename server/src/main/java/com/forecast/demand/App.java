@@ -1,5 +1,7 @@
 package com.forecast.demand;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -8,8 +10,14 @@ import com.forecast.demand.common.DBLoader;
 import com.forecast.demand.common.XmlHelper;
 import com.forecast.demand.model.Table;
 import com.forecast.demand.model.ColumnType;
-
 import com.forecast.demand.controller.DataFeeds;
+
+import org.eclipse.jetty.security.ConstraintMapping;
+import org.eclipse.jetty.security.ConstraintSecurityHandler;
+import org.eclipse.jetty.security.JDBCLoginService;
+import org.eclipse.jetty.security.LoginService;
+import org.eclipse.jetty.security.SecurityHandler;
+import org.eclipse.jetty.security.authentication.BasicAuthenticator;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
@@ -20,6 +28,7 @@ import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.util.security.Constraint;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletContainer;
 
@@ -86,5 +95,28 @@ public class App
 
         //Initialize Global Cache for all Table Config
         //XmlHelper.updateTableConfig("resources/YumSalesForecast.xml");
+    }
+    
+    private static final SecurityHandler basicAuth(String username, String password, String realm) throws IOException {    
+        File jdbcRealmFile = new File("jdbcrealm.properties");
+        LoginService l = new JDBCLoginService(realm, jdbcRealmFile.getAbsolutePath());
+        
+        Constraint constraint = new Constraint();
+        constraint.setName(Constraint.__BASIC_AUTH);
+        constraint.setRoles(new String[]{"user"});
+        constraint.setAuthenticate(true);
+         
+        ConstraintMapping cm = new ConstraintMapping();
+        cm.setConstraint(constraint);
+        cm.setPathSpec("/*");
+        
+        ConstraintSecurityHandler csh = new ConstraintSecurityHandler();
+        csh.setAuthenticator(new BasicAuthenticator());
+        csh.setRealmName("myrealm");
+        csh.addConstraintMapping(cm);
+        csh.setLoginService(l);
+        
+        return csh;
+    	
     }
 }
