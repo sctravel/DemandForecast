@@ -47,29 +47,7 @@
    }
 
 
-
-
-
-
-
-
-//   $scope.saveRow = function() {
-     // create a fake promise - normally you'd use the promise returned by $http or $resource
-//     console.log("in save");
-//
-//     var promise = $q.defer();
-//     $scope.gridApi.rowEdit.setSavePromise( rowEntity, promise.promise );
-//
-     // fake a delay of 3 seconds whilst the save occurs, return error if gender is "male"
-//     $interval( function() {
-//       if (rowEntity.gender === 'male' ){
-//         promise.reject();
-//       } else {
-//         promise.resolve();
-//       }
-//     }, 3000, 1);
-//   };
-         vm = this;
+        vm = this;
         var newId = 1;
         vm.ignoreChanges = false;
         vm.newNode = {};
@@ -198,16 +176,20 @@
             var dimlist = "";
             var filter ="";
             var measureList = "";
-            var filter_infos = {};
+            filter_infos = {};
             for(var i=0; i < selectedDimensions.length;i++){
                  selected_node = treeInstance.get_node(selectedDimensions[i]);
+
                  if(selected_node.id.indexOf("_") < 0){
                     continue;
                  }
+                 console.log(selected_node.parent.id);
+                 if (selected_node.parent.indexOf("_") > -1 && treeInstance.get_node(selected_node.parent).state.selected) continue;
                  infos = selected_node.id.split("_");
                  dimension_name = infos[0];
                  dimension_level = infos[1];
                  level_struc = infos[2].split(",");
+                 console.dir(level_struc);
                  dimension_path =  level_struc.slice(0,level_struc.indexOf(dimension_level)+1);
                  for(var j = 0; j < dimension_path.length;j++){
                      var index = dimlist.indexOf(dimension_path[j]);
@@ -215,6 +197,7 @@
                      var pre = index -1 ;
                       console.log( dimension_path[j] + " pre" + " : " + pre);
                     if( index > -1 && ((pre >=0 && dimlist[pre] == ",") || pre < 0)) continue;
+
 
                     dimlist = dimlist + dimension_path[j] + ",";
                    var gridOption = {name : dimension_path[j]};
@@ -228,6 +211,7 @@
                     filter_infos[dimension_level].push(dimension_name);
                  }
          }
+
             dimlist = dimlist.substring(0,dimlist.length-1);
 
             for(var i = 0; i < selectedMeasures.length; i++) {
