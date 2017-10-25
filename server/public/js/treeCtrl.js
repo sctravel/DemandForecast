@@ -208,8 +208,14 @@
                  dimension_level = infos[1];
                  level_struc = infos[2].split(",");
                  dimension_path =  level_struc.slice(0,level_struc.indexOf(dimension_level)+1);
+                 test = dimlist;
                  for(var j = 0; j < dimension_path.length;j++){
-                    if(dimlist.indexOf(dimension_path[j]) > -1) continue;
+                     var index = dimlist.indexOf(dimension_path[j]);
+                    console.log(dimension_path[j] + " : " + index);
+                     var pre = index -1 ;
+                      console.log( dimension_path[j] + " pre" + " : " + pre);
+                    if( index > -1 && ((pre >=0 && dimlist[pre] == ",") || pre < 0)) continue;
+
                     dimlist = dimlist + dimension_path[j] + ",";
                    var gridOption = {name : dimension_path[j]};
                    $scope.gridOptions.columnDefs.push(gridOption);
