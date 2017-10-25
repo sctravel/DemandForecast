@@ -32,6 +32,7 @@
                          $scope.changeList[currChange.key] = currChange;
 
                      }
+                     changeList =  $scope.changeList;
                      $scope.$apply();
                   });
                 };
@@ -208,7 +209,6 @@
                  dimension_level = infos[1];
                  level_struc = infos[2].split(",");
                  dimension_path =  level_struc.slice(0,level_struc.indexOf(dimension_level)+1);
-                 test = dimlist;
                  for(var j = 0; j < dimension_path.length;j++){
                      var index = dimlist.indexOf(dimension_path[j]);
                     console.log(dimension_path[j] + " : " + index);
@@ -239,7 +239,6 @@
             measureList = measureList.substring(0,measureList.length-1);
 
              for(var prop in filter_infos){
-
                             var tmp = "";
                             var vals = filter_infos[prop];
 
