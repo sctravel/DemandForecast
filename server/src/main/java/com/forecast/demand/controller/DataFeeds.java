@@ -3,6 +3,7 @@ package com.forecast.demand.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.forecast.demand.GlobalCache;
 import com.forecast.demand.common.DBHelper;
+import com.forecast.demand.common.StringUtil;
 import com.forecast.demand.model.*;
 import com.forecast.demand.queryGen.IMeasureAdjuster;
 import com.forecast.demand.queryGen.MeasureAdjusterFactory;
@@ -39,7 +40,7 @@ public class DataFeeds {
 	@GET
 	@Path("/tables/{tableName}")
 	@Produces(MediaType.APPLICATION_JSON+"; charset=utf-8")
-	public Response getColumns(@PathParam("tableName") String tableName) {
+	public Response getColumns(@PathParam("tableName") String tableName) throws Exception{
 		Table table = GlobalCache.getTable(tableName);
 		ObjectMapper mapper = new ObjectMapper();
 		String value = null;
@@ -91,10 +92,65 @@ public class DataFeeds {
 	}
 
 	@GET
+	@Path("/tables/{tableName}/userView/{userViewId}/query")
+	@Produces(MediaType.APPLICATION_JSON+"; charset=utf-8")
+	public Response query(@PathParam("tableName")String tableName, @QueryParam("userViewId") String userViewId,
+						  @QueryParam("filter") String filter) throws Exception {
+		List<String> columnNames = new ArrayList<>();
+		//TODO check userId equals userView.getUserName()
+		Table table = GlobalCache.getTable(tableName);
+		Map<String, Column> columnMap = table.getColumnMap();
+
+		UserView userView = GlobalCache.getUserView(userViewId);
+
+		TimeGrain timeGrain = userView.getTimeGrain();
+		columnNames.add(sqlGen.generateColumnFromGrain(timeGrain, userView.getDateColumnName()) + " AS " + userView.getDateColumnName());
+		List<String> measureList = userView.getMeasures();
+		for(String measure : measureList) {
+			columnNames.add( columnMap.get(measure).getAggregationType().toString() +"("+measure+")");
+		}
+
+		StringBuilder queryBuilder = new StringBuilder();
+		queryBuilder.append(sqlGen.generateSelect(columnNames, false));
+		queryBuilder.append(sqlGen.generateFrom(tableName));
+		if(filter!=null&&!filter.trim().isEmpty()) queryBuilder.append(sqlGen.generateWhere(filter));
+
+		List<String> dimList = userView.getDimensions();
+		dimList.add(sqlGen.generateColumnFromGrain(timeGrain, userView.getDateColumnName()));
+		queryBuilder.append(sqlGen.generateGroupBy(dimList));
+/*
+		String query = queryBuilder.toString();
+		List<List<String>> queryResult = DBHelper.getQueryResult(query);
+		List<Map<String, String>> res = new ArrayList<Map<String, String>>();
+		for(List<String> list : queryResult) {
+			int idx = 0;
+			Map<String, String> map = new HashMap<>();
+			for(String dim : dimList) {
+				map.put(dim, list.get(idx++));
+			}
+			for(String measure : measureList) {
+				map.put(measure, list.get(idx++));
+			}
+			res.add(map);
+		}
+*/
+		ObjectMapper mapper = new ObjectMapper();
+		String value = null;
+		try {
+			value = mapper.writeValueAsString("");
+			System.out.println("JSON - " + value);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return Response.serverError().build();
+		}
+		return Response.ok().entity(value).build();
+	}
+
+	@GET
 	@Path("/tables/{tableName}/query")
 	@Produces(MediaType.APPLICATION_JSON+"; charset=utf-8")
 	public Response query(@PathParam("tableName")String tableName, @QueryParam("dimList") String dimListString,
-		  @QueryParam("measureList") String measureListString, @QueryParam("filter") String filter) {
+		  @QueryParam("measureList") String measureListString, @QueryParam("filter") String filter) throws Exception {
         List<String> columnNames = new ArrayList<>();
         List<String> dimList = Arrays.asList(dimListString.split(","));
 		List<String> measureList = Arrays.asList(measureListString.split(","));
@@ -159,7 +215,7 @@ public class DataFeeds {
 			//DBHelper.addColumnToTable(tableName, measureColumn);
 		}
 		//add an extra virtual column as expression
-		Table table = GlobalCache.getTable(tableName);
+		//Table table = GlobalCache.getTable(tableName);
 		//table.addColumn(measureColumn);
 		//String xml = table.serializeToXml();
 		// update xml to DB;

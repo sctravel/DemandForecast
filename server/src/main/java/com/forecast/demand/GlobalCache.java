@@ -3,32 +3,35 @@ package com.forecast.demand;
 import com.forecast.demand.common.DBHelper;
 import com.forecast.demand.common.XmlHelper;
 import com.forecast.demand.model.Table;
+import com.forecast.demand.model.UserView;
+import com.forecast.demand.util.DbOperation;
+import com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIConversion;
+import com.forecast.demand.exception.UserException;
 
 import java.util.*;
 
 public class GlobalCache {
     private static Map<String, Table> tableCache = new HashMap<>();
-    private static Map<String, String> userViewCache = new HashMap<>();
+    private static Map<String, UserView> userViewCache = new HashMap<>();
 
     public static void initialize() {
-        String query = "Select tablename, xmlconfig, owners, description from TableMetadata";
-        List<List<String>> res = DBHelper.getQueryResult(query);
-        for(List<String> list : res) {
-            String tableName = list.get(0);
-            String xmlConfig = list.get(1);
-            Table table = XmlHelper.readTableFromXmlConfig(xmlConfig);
-            tableCache.put(tableName, table);
-        }
+        tableCache = DbOperation.getTableMap();
+        userViewCache = DbOperation.getUserViewMap();
     }
 
-    public static Table getTable(String tableName) {
+    public static Table getTable(String tableName) throws UserException {
         if(tableCache.containsKey(tableName)) {
             return tableCache.get(tableName);
         } else {
-            //TODO refine this logic, if not found in DB, search in the resources folder for xml file
-            Table table = XmlHelper.readTableFromXmlConfigFile("Resources/" + tableName + ".xml");
-            if(table!=null) tableCache.put(tableName, table);
-            return table;
+            throw new UserException(String.format("tableName - {%s} doesn't exist", tableName));
+        }
+    }
+
+    public static UserView getUserView(String userViewId) throws UserException {
+        if(userViewCache.containsKey(userViewId)) {
+            return userViewCache.get(userViewId);
+        } else {
+            throw new UserException(String.format("userViewId - {%s} doesn't exist", userViewId));
         }
     }
 

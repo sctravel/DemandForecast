@@ -1,5 +1,7 @@
 package com.forecast.demand.model;
 
+import com.forecast.demand.common.StringUtil;
+
 /**
  * Created by tuxi1 on 10/30/2017.
  */
@@ -21,13 +23,5 @@ public enum TimeGrain {
         return name;
     }
 
-    public static TimeGrain Lookup(String timeGrain) {
-        for (TimeGrain tg : TimeGrain.values()) {
-            if (tg.name().equalsIgnoreCase(timeGrain)) {
-                return tg;
-            }
-        }
-        return null;
-    }
 
 }

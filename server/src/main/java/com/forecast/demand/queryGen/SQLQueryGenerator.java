@@ -3,6 +3,7 @@ package com.forecast.demand.queryGen;
 import com.forecast.demand.model.ColumnType;
 import com.forecast.demand.model.Filter;
 import com.forecast.demand.model.FilterOperation;
+import com.forecast.demand.model.TimeGrain;
 
 import java.util.List;
 
@@ -70,6 +71,35 @@ public class SQLQueryGenerator implements IQueryGenerator{
         }
         sb.deleteCharAt(sb.length()-1);
         sb.append(" ");
+        return sb.toString();
+    }
+
+    public String generateColumnFromGrain(TimeGrain grain, String column) {
+        StringBuilder sb = new StringBuilder();
+        switch (grain) {
+            case DAILY:
+                sb.append(column);
+                break;
+            case WEEKLY:
+                //DATE_ADD(salesdate, INTERVAL(1-DAYOFWEEK(salesdate)) DAY) AS salesdate
+                sb.append("DATE_ADD("+column+", INTERVAL(1-DAYOFWEEK("+column+ ")) DAY) ");
+                break;
+            case MONTHLY:
+                //salesdate-dayofmonth(salesdate)+1 AS salesdate
+                sb.append(column+"-dayofmonth("+column+")+1 ");
+                break;
+            case QUARTERLY:
+                //MAKEDATE(YEAR(salesdate), 1) + INTERVAL QUARTER(salesdate) QUARTER - INTERVAL 1 QUARTER
+                sb.append("MAKEDATE(year("+column+"),1) + INTERVAL QUARTER("+column+") QUARTER - INTERVAL 1 QUARTER ");
+                break;
+            case YEARLY:
+                //MAKEDATE(year(salesdate),1) AS salesdate
+                sb.append("MAKEDATE(year("+column+"),1) ");
+                break;
+            default:
+                sb.append(column);
+                break;
+        }
         return sb.toString();
     }
 

@@ -20,13 +20,4 @@ public enum ColumnType {
     public String toString() {
         return name;
     }
-
-    public static ColumnType Lookup(String columnType) {
-        for (ColumnType ct : ColumnType.values()) {
-            if (ct.name().equalsIgnoreCase(columnType)) {
-                return ct;
-            }
-        }
-        return null;
-    }
 }

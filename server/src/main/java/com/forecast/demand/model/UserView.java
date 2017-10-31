@@ -16,10 +16,14 @@ public class UserView {
     private List<String> measures;
     private List<String> dimensions;
     private TimeGrain timeGrain;
+    private String dateColumnName;
 
     private Date defaultStartDate;
     private Date defaultEndDate;
 
+    public String getDateColumnName() {
+        return dateColumnName;
+    }
     public Date getDefaultEndDate() {
         return defaultEndDate;
     }
@@ -63,25 +67,26 @@ public class UserView {
     public void setUsername(String username) {
         this.username = username;
     }
+    public void setDateColumnName(String dateColumnName) {
+        this.dateColumnName = dateColumnName;
+    }
 
-    public static UserView fromJson(String json) throws Exception {
+    public static UserView fromJson(String json) {
         ObjectMapper mapper = new ObjectMapper();
         try {
             return mapper.readValue(json, UserView.class);
         } catch (Exception e) {
             e.printStackTrace();
-            throw e;
+            return null;
         }
-
     }
-    public String toJson() throws Exception  {
+    public String toJson(){
         ObjectMapper mapper = new ObjectMapper();
         String value = null;
         try {
             value = mapper.writeValueAsString(this);
         } catch (Exception e) {
             e.printStackTrace();
-            throw e;
         }
         return value;
     }
