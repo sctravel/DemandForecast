@@ -35,6 +35,7 @@ public class XmlHelper {
             Table table = readTableFromXmlConfig(xmlContent);
             DBHelper.runQuery(sql, new String[]{xmlContent, table.getOwners(), table.getDescription(), table.getName()},
                     new ColumnType[]{ColumnType.STRING, ColumnType.STRING, ColumnType.STRING, ColumnType.STRING});
+            System.out.println("Updated: " + xmlFilePath);
         } catch (Exception ex) {
             ex.printStackTrace();
             return false;
@@ -150,6 +151,8 @@ public class XmlHelper {
                 System.out.println("columnName : " + columnTypeString);
                 ColumnType columnType = StringUtil.searchEnum(ColumnType.class, columnTypeString);
 
+                String isNullableString = eElement.getElementsByTagName("isNullable").getLength()==0?null:eElement.getElementsByTagName("isNullable").item(0).getTextContent();
+                boolean isNullable = (isNullableString==null||isNullableString.trim().isEmpty()) ? false : Boolean.valueOf(isNullableString);
                 String displayName = eElement.getElementsByTagName("displayName").item(0).getTextContent();
                 String isMeasureString = eElement.getElementsByTagName("isMeasure").getLength()==0?null:eElement.getElementsByTagName("isMeasure").item(0).getTextContent();
                 String isEditableString = eElement.getElementsByTagName("isEditable").getLength()==0?null:eElement.getElementsByTagName("isEditable").item(0).getTextContent();
@@ -157,11 +160,14 @@ public class XmlHelper {
                 boolean isMeasure = (isMeasureString==null||isMeasureString.trim().isEmpty()) ? false : Boolean.valueOf(isMeasureString);
                 boolean isEditable = (isEditableString==null||isEditableString.trim().isEmpty()) ? false : Boolean.valueOf(isEditableString);
                 AggregationType aggregationType = (aggregationTypeString==null||aggregationTypeString.trim().isEmpty()) ? AggregationType.SUM : StringUtil.searchEnum(AggregationType.class, aggregationTypeString);
+
+                String clientExpression = eElement.getElementsByTagName("clientExpression").getLength()==0?null:eElement.getElementsByTagName("clientExpression").item(0).getTextContent();
+
                 //System.out.println("columnType : " + columnType);
                 //System.out.println("displayName : " + displayName);
                 //System.out.println("isMeasure : " + isMeasure);
                 //System.out.println("isEditable: " + isEditable);
-                Column column = new Column(columnName, columnType, displayName, isMeasure, isEditable, aggregationType);
+                Column column = new Column(columnName, columnType, isNullable, displayName, isMeasure, isEditable, aggregationType, clientExpression);
                 list.add(column);
             }
         }

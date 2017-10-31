@@ -8,15 +8,17 @@ public class MeasureAdjustment {
     private Map<String, String> dimensionValues;
     private String tableName, measureName;
     private Double newValue, oldValue;
+    private String measureType; //Desimal or Integer
     //private Policy adjustPolicy
 
     public MeasureAdjustment(String tableName, Map<String, String> dimValues,
-                             String measureName, double oldValue, double newValue) {
+                             String measureName, double oldValue, double newValue, String measureType) {
         this.tableName = tableName;
         this.dimensionValues = dimValues;
         this.measureName = measureName;
         this.oldValue = oldValue;
         this.newValue = newValue;
+        this.measureType = measureType;
     }
 
     public String getTableName() {
@@ -37,5 +39,9 @@ public class MeasureAdjustment {
 
     public Double getNewValue() {
         return newValue;
+    }
+
+    public String getMeasureType() {
+        return measureType;
     }
 }

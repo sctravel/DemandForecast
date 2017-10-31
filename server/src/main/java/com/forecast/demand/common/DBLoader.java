@@ -43,18 +43,21 @@ public class DBLoader {
     private void setColumnValue(PreparedStatement preparedStmt, Column column, String[] content, int index) {
         String val = null;
         if(index<content.length) val=content[index];
+
         try {
             if(column.getType()==ColumnType.STRING) {
-                preparedStmt.setString (index+1, val);
+                preparedStmt.setString (index+1, val==null?null:val.trim());
             } else if(column.getType()==ColumnType.INTEGER) {
-                preparedStmt.setInt(index+1, val==null||val.isEmpty()? 0 :Integer.parseInt(val));
+                int num = val == null || val.trim().isEmpty() ? 0 : Integer.parseInt(val.trim());
+
+                preparedStmt.setInt(index+1, num);
             } else if(column.getType()==ColumnType.BOOLEAN) {
-                preparedStmt.setBoolean(index+1, val==null||val.isEmpty() ? false : Boolean.valueOf(val));
+                preparedStmt.setBoolean(index+1, val==null||val.trim().isEmpty() ? false : Boolean.valueOf(val.trim()));
             } else if(column.getType()==ColumnType.DATETIME) {
-                LocalDate date = val==null||val.isEmpty() ? null : DateTimeUtil.parseDateIndMMMyy(val, "-");
+                LocalDate date = val==null||val.trim().isEmpty() ? null : DateTimeUtil.parseDateIndMMMyy(val.trim(), "-");
                 preparedStmt.setDate(index+1, date==null? java.sql.Date.valueOf("1900-01-01") :java.sql.Date.valueOf(date));
             } else if(column.getType()==ColumnType.DECIMAL) {
-                preparedStmt.setDouble(index+1, val==null||val.isEmpty()? 0 :Double.parseDouble(val));
+                preparedStmt.setDouble(index+1, val==null||val.trim().isEmpty()? 0 :Double.parseDouble(val.trim()));
             }
         } catch (SQLException e) {
             e.printStackTrace();

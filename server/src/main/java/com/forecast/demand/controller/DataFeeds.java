@@ -3,8 +3,9 @@ package com.forecast.demand.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.forecast.demand.GlobalCache;
 import com.forecast.demand.common.DBHelper;
-import com.forecast.demand.model.Column;
-import com.forecast.demand.model.Table;
+import com.forecast.demand.model.*;
+import com.forecast.demand.queryGen.IMeasureAdjuster;
+import com.forecast.demand.queryGen.MeasureAdjusterFactory;
 import com.forecast.demand.queryGen.SQLQueryGenerator;
 import com.forecast.demand.queryGen.IQueryGenerator;
 
@@ -141,10 +142,57 @@ public class DataFeeds {
 	}
 
 	@POST
-	@Path("/tables/{tableName}/{DimList}/{changeList}/{filter}")
+	@Path("/tables/{tableName}/adjustValue")
 	@Produces(MediaType.APPLICATION_JSON+"; charset=utf-8")
-	public String adjustValue(@PathParam("tableName")String tableName, @PathParam("dimList") String dimListSrting,
-		  @PathParam("changeList") String changeListString, @PathParam("filter") String filter) {
-	    return "{}";
+	public Response adjustValue(@PathParam("tableName")String tableName, MeasureAdjustment measureAdjustment) {
+		IMeasureAdjuster adjuster = MeasureAdjusterFactory.getMeasureAdjuster(measureAdjustment.getMeasureType());
+		adjuster.adjustMeasure(measureAdjustment);
+		return Response.ok().build();
+	}
+
+	@POST
+	@Path("/tables/{tableName}/measures")
+	@Produces(MediaType.APPLICATION_JSON+"; charset=utf-8")
+	public Response createNewMeasure(@PathParam("tableName")String tableName, MeasureColumn measureColumn) {
+		if(measureColumn.getClientExpression()==null||measureColumn.getClientExpression().trim().isEmpty()) {
+			//add an extra column in table
+			//DBHelper.addColumnToTable(tableName, measureColumn);
+		}
+		//add an extra virtual column as expression
+		Table table = GlobalCache.getTable(tableName);
+		//table.addColumn(measureColumn);
+		//String xml = table.serializeToXml();
+		// update xml to DB;
+
+		return Response.ok().build();
+	}
+
+	@GET
+	@Path("/userViews/{userViewId}")
+	@Produces(MediaType.APPLICATION_JSON+"; charset=utf-8")
+	public Response getUserView(@PathParam("userViewId")String userViewId) {
+		// TODO get userId from http body
+		// get userview json from db
+		String userViewJson = "";
+		return Response.ok().entity(userViewJson).build();
+	}
+
+	@POST
+	@Path("/userViews/")
+	@Produces(MediaType.APPLICATION_JSON+"; charset=utf-8")
+	public Response CreateOrUpdateUserView(@PathParam("userViewId")String userViewId, String tableName, String userViewJson) {
+		// TODO get userId from http body
+		// get userview json from db
+		return Response.ok().entity(userViewJson).build();
+	}
+
+	@DELETE
+	@Path("/userViews/{userViewName}")
+	@Produces(MediaType.APPLICATION_JSON+"; charset=utf-8")
+	public Response deleteUserView(@PathParam("userViewName")String userViewName) {
+		// TODO get userId from http body
+		// delete userview from db
+		String userViewJson = "";
+		return Response.ok().entity(userViewJson).build();
 	}
 }

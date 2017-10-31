@@ -90,6 +90,7 @@
             <displayName>Consensus Forecast</displayName>
             <isMeasure>true</isMeasure>
             <aggregationType>sum</aggregationType>
+            <clientExpression>ForecastSalesNumber+MarketingAdjustment+DemandPlannerAdjustment</clientExpression>
         </column>
     </columns>
     <!-- Dimension Column should always be String type-->
@@ -112,24 +113,6 @@
                 <level>Subcategory</level>
                 <level>DetailCategory</level>
                 <level>Item</level>
-            </levels>
-        </dimension>
-        <dimension>
-            <name>DateTime</name>
-            <displayName>年月日</displayName>
-            <levels>
-                <level>Year(SalesDate)</level>
-                <level>Month(SalesDate)</level>
-                <level>SalesDate</level>
-            </levels>
-        </dimension>
-        <dimension>
-            <name>DateTimeInWeek</name>
-            <displayName>年周日</displayName>
-            <levels>
-                <level>Year(SalesDate)</level>
-                <level>Week(SalesDate)</level>
-                <level>SalesDate</level>
             </levels>
         </dimension>
     </dimensions>

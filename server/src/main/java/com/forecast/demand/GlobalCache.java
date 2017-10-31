@@ -8,6 +8,7 @@ import java.util.*;
 
 public class GlobalCache {
     private static Map<String, Table> tableCache = new HashMap<>();
+    private static Map<String, String> userViewCache = new HashMap<>();
 
     public static void initialize() {
         String query = "Select tablename, xmlconfig, owners, description from TableMetadata";

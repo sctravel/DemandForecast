@@ -13,4 +13,6 @@ public interface IQueryGenerator {
     String generateGroupBy(List<String> columnNames);
     String generateOrderBy(List<String> columnNames, boolean isDesc);
     String generateWhere(List<Filter> filters);
+
+    //String addColumn(String tableName, Column column);
 }

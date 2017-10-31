@@ -7,7 +7,7 @@ CREATE TABLE TableMetadata (
     description varchar(1024),
     createdTime timestamp default now(),
     lastUpdatedTime timestamp default now() on update now()
-)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 CREATE TABLE YumSalesForecast (
     District varchar(128),
@@ -29,7 +29,16 @@ CREATE TABLE YumSalesForecast (
     lastUpdatedTime timestamp default now() on update now()
 ) ENGINE=InnoDB CHARACTER SET=utf8;
 
+CREATE TABLE UserViews (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    userId INT NOT NULL,
+    tableName varchar(128) NOT NULL,
+    details blob ,
+    FOREIGN KEY (userId) REFERENCES Users(userId),
+    FOREIGN KEY (tableName) REFERENCES TableMetadata(TableName)
+)ENGINE=InnoDB AUTO_INCREMENT=100000001 DEFAULT CHARSET=utf8;
 
+CREATE UNIQUE INDEX UserViews_userId on UserViews (userId);
 
 CREATE TABLE Org
      (orgId INT PRIMARY KEY AUTO_INCREMENT,
