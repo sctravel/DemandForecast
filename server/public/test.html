@@ -129,7 +129,9 @@
                <br>
                <strong>Last Cell Edited:</strong> {{msg.lastCellEdited}}
                <br>
-               <div id="table-wrapper" ui-grid="gridOptions" class="grid,panel-body" ui-grid-auto-resize ui-grid-edit ui-grid-row-edit ui-grid-cellNav ></div>
+               <div id="table-wrapper" ui-grid="gridOptions" class="grid,panel-body" ui-grid-auto-resize ui-grid-edit  ui-grid-cellNav ></div>
+               <br>
+               <button id="footerButton" class="btn btn-success" ng-click="toggleFooter()">提交</button>
         </div>
 
         <!-- /.row -->

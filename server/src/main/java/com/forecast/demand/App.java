@@ -2,6 +2,7 @@ package com.forecast.demand;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -14,6 +15,7 @@ import com.forecast.demand.controller.DataFeeds;
 
 import org.eclipse.jetty.security.ConstraintMapping;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;
+import org.eclipse.jetty.security.HashLoginService;
 import org.eclipse.jetty.security.JDBCLoginService;
 import org.eclipse.jetty.security.LoginService;
 import org.eclipse.jetty.security.SecurityHandler;
@@ -41,6 +43,8 @@ import org.glassfish.jersey.servlet.ServletContainer;
  * http://localhost:8090/home/test.html
  * for rest end point try example below after jetty server bootup
  * 
+ * username:admin
+ * password:test
  */
 public class App 
 {
@@ -65,22 +69,49 @@ public class App
         ResourceHandler resourceHandler= new ResourceHandler();
         resourceHandler.setResourceBase("public");
         resourceHandler.setDirectoriesListed(true);
-        resourceHandler.setWelcomeFiles(new String [] {"test.html"});
+        resourceHandler.setWelcomeFiles(new String [] {"test.html","logon.html"});
         ContextHandler contextStaticContentHandler= new ContextHandler("/home");
-        contextStaticContentHandler.setHandler(resourceHandler);
-       
-        //restAPIhandler,
+        contextStaticContentHandler.setHandler(resourceHandler); 
+           
         HandlerCollection handlerCollection = new HandlerCollection();
         handlerCollection.setHandlers(new Handler[] {contextStaticContentHandler,restAPIhandler});
-       
-        server.setHandler(handlerCollection);
 
         ServletHolder staticHolder = new ServletHolder("static-home",new DefaultServlet());
         staticHolder.setInitParameter("dirAllowed","true");
         staticHolder.setInitParameter("pathInfoOnly", "true");
         staticHolder.setInitParameter("resourceBase", "public");
         context.addServlet(staticHolder, "/home/*");
+        
+        LoginService loginService = new HashLoginService("MyRealm",
+                "resources/realm.properties");
+        server.addBean(loginService);
+        ConstraintSecurityHandler security = new ConstraintSecurityHandler();
+        server.setHandler(security);
+        
+        security.setHandler(handlerCollection);
+        
+        Constraint constraint = new Constraint();
+        constraint.setName("auth");
+        constraint.setAuthenticate(true);
+        constraint.setRoles(new String[] { "user", "admin" });
 
+        // Binds a url pattern with the previously created constraint. The roles
+        // for this constraing mapping are mined from the Constraint itself
+        // although methods exist to declare and bind roles separately as well.
+        ConstraintMapping mapping = new ConstraintMapping();
+        mapping.setPathSpec("/*");
+        mapping.setConstraint(constraint);
+
+        // First you see the constraint mapping being applied to the handler as
+        // a singleton list, however you can passing in as many security
+        // constraint mappings as you like so long as they follow the mapping
+        // requirements of the servlet api. Next we set a BasicAuthenticator
+        // instance which is the object that actually checks the credentials
+        // followed by the LoginService which is the store of known users, etc.
+        security.setConstraintMappings(Collections.singletonList(mapping));
+        security.setAuthenticator(new BasicAuthenticator());
+        security.setLoginService(loginService);
+        
         GlobalCache.initialize();
 
         try {

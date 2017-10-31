@@ -8,31 +8,46 @@
       $scope.gridOptions.columnDefs = [];
       $scope.msg = {};
 
+      $scope.changeList = {};
+      $scope.changeKeys = [];
+
    $scope.gridOptions.onRegisterApi = function(gridApi){
                   //set gridApi on scope
                   $scope.gridApi = gridApi;
-                  gridApi.rowEdit.on.saveRow($scope, $scope.saveRow);
+                 // gridApi.rowEdit.on.saveRow($scope, $scope.saveRow);
                   gridApi.edit.on.afterCellEdit($scope,function(rowEntity, colDef, newValue, oldValue){
-                    $scope.msg.lastCellEdited = 'edited row id:' + rowEntity.id + ' Column:' + colDef.name + ' newValue:' + newValue + ' oldValue:' + oldValue ;
-                    $scope.$apply();
+                     var currChange ={};
+                     currChange.key = rowEntity.$$hashKey+ "_" + colDef.name;
+                     if($scope.changeKeys.indexOf(currChange.key) > -1) {
+                         $scope.changeList[currChange.key].time = Math.floor(Date.now() / 1000);
+                         $scope.changeList[currChange.key].newValue = newValue;
+                         $scope.changeList[currChange.key].oldValue = oldValue;
+                     }else{
+                         currChange.time = Math.floor(Date.now() / 1000);
+                         currChange.column = colDef.name;
+                         currChange.newValue = newValue;
+                         currChange.oldValue = oldValue;
+                         currChange.schema = $scope.gridOptions.columnDefs;
+                         $scope.changeKeys.push(currChange.key);
+                         $scope.changeList[currChange.key] = currChange;
+
+                     }
+                     changeList =  $scope.changeList;
+                     $scope.$apply();
                   });
                 };
-   $scope.saveRow = function( rowEntity ) {
-     // create a fake promise - normally you'd use the promise returned by $http or $resource
 
-     var promise = $q.defer();
-     $scope.gridApi.rowEdit.setSavePromise( rowEntity, promise.promise );
+   $scope.save = function(){
+        if($scope.changeKeys.length == 0){
+            alert("No change will be submitted");
+        }else{
+            //$http.post to backend
+        }
 
-     // fake a delay of 3 seconds whilst the save occurs, return error if gender is "male"
-//     $interval( function() {
-//       if (rowEntity.gender === 'male' ){
-//         promise.reject();
-//       } else {
-//         promise.resolve();
-//       }
-//     }, 3000, 1);
-   };
-         vm = this;
+   }
+
+
+        vm = this;
         var newId = 1;
         vm.ignoreChanges = false;
         vm.newNode = {};
@@ -161,19 +176,29 @@
             var dimlist = "";
             var filter ="";
             var measureList = "";
-            var filter_infos = {};
+            filter_infos = {};
             for(var i=0; i < selectedDimensions.length;i++){
                  selected_node = treeInstance.get_node(selectedDimensions[i]);
+
                  if(selected_node.id.indexOf("_") < 0){
                     continue;
                  }
+                 console.log(selected_node.parent.id);
+                 if (selected_node.parent.indexOf("_") > -1 && treeInstance.get_node(selected_node.parent).state.selected) continue;
                  infos = selected_node.id.split("_");
                  dimension_name = infos[0];
                  dimension_level = infos[1];
                  level_struc = infos[2].split(",");
+                 console.dir(level_struc);
                  dimension_path =  level_struc.slice(0,level_struc.indexOf(dimension_level)+1);
                  for(var j = 0; j < dimension_path.length;j++){
-                    if(dimlist.indexOf(dimension_path[j]) > -1) continue;
+                     var index = dimlist.indexOf(dimension_path[j]);
+                    console.log(dimension_path[j] + " : " + index);
+                     var pre = index -1 ;
+                      console.log( dimension_path[j] + " pre" + " : " + pre);
+                    if( index > -1 && ((pre >=0 && dimlist[pre] == ",") || pre < 0)) continue;
+
+
                     dimlist = dimlist + dimension_path[j] + ",";
                    var gridOption = {name : dimension_path[j]};
                    $scope.gridOptions.columnDefs.push(gridOption);
@@ -186,6 +211,7 @@
                     filter_infos[dimension_level].push(dimension_name);
                  }
          }
+
             dimlist = dimlist.substring(0,dimlist.length-1);
 
             for(var i = 0; i < selectedMeasures.length; i++) {
@@ -197,7 +223,6 @@
             measureList = measureList.substring(0,measureList.length-1);
 
              for(var prop in filter_infos){
-
                             var tmp = "";
                             var vals = filter_infos[prop];
 
