@@ -1,8 +1,11 @@
 package com.forecast.demand.model;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.forecast.demand.common.StringUtil;
 
 import javax.ws.rs.core.Response;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +14,7 @@ import java.util.Map;
  * Created by tuxi1 on 10/18/2017.
  */
 public class UserView {
+    private int id;
     private String username;
     private String tableName;
     private List<String> measures;
@@ -18,13 +22,33 @@ public class UserView {
     private TimeGrain timeGrain;
     private String dateColumnName;
 
-    private Date defaultStartDate;
-    private Date defaultEndDate;
+    private String defaultStartDate;
+    private String defaultEndDate;
 
+    private Map<String, String> virtualMeasureMap;
+
+    public UserView(){}
+
+    public UserView(String username, String tableName, List<String> measures, List<String> dimensions, String grain, String dateColumnName,
+                    String startDate, String endDate, Map<String, String> virtualMeasureMap) {
+        this.username = username;
+        this.tableName = tableName;
+        this.measures = measures;
+        this.dimensions = dimensions;
+        this.timeGrain = StringUtil.searchEnum(TimeGrain.class, grain);
+        this.dateColumnName = dateColumnName;
+        this.defaultStartDate =  startDate;
+        this.defaultEndDate = endDate;
+        this.virtualMeasureMap = virtualMeasureMap;
+    }
+
+    public int getId() {
+        return id;
+    }
     public String getDateColumnName() {
         return dateColumnName;
     }
-    public Date getDefaultEndDate() {
+    public String getDefaultEndDate() {
         return defaultEndDate;
     }
     public List<String> getDimensions() {
@@ -39,17 +63,28 @@ public class UserView {
     public TimeGrain getTimeGrain() {
         return timeGrain;
     }
-    public Date getDefaultStartDate() {
+    public String getDefaultStartDate() {
         return defaultStartDate;
     }
     public List<String> getMeasures() {
         return measures;
     }
 
-    public void setDefaultEndDate(Date defaultEndDate) {
+    public Map<String, String> getVirtualMeasureMap() {
+        return virtualMeasureMap;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setVirtualMeasureMap(Map<String, String> virtualMeasureMap) {
+        this.virtualMeasureMap = virtualMeasureMap;
+    }
+    public void setDefaultEndDate(String defaultEndDate) {
         this.defaultEndDate = defaultEndDate;
     }
-    public void setDefaultStartDate(Date defaultStartDate) {
+    public void setDefaultStartDate(String defaultStartDate) {
         this.defaultStartDate = defaultStartDate;
     }
     public void setDimensions(List<String> dimensions) {

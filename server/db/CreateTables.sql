@@ -34,9 +34,12 @@ CREATE TABLE UserViews (
     userId INT NOT NULL,
     tableName varchar(128) NOT NULL,
     details blob ,
+    createdTime timestamp default now(),
+    lastUpdatedTime timestamp default now() on update now(),
+    lastUpdatedBy VARCHAR(15) default 'sysuser',
     FOREIGN KEY (userId) REFERENCES Users(userId),
     FOREIGN KEY (tableName) REFERENCES TableMetadata(TableName)
-)ENGINE=InnoDB AUTO_INCREMENT=100000001 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 CREATE UNIQUE INDEX UserViews_userId on UserViews (userId);
 
