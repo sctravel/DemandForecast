@@ -203,20 +203,20 @@ public class DataFeeds {
 	@POST
 	@Path("/tables/{tableName}/adjustValue")
 	@Produces(MediaType.APPLICATION_JSON+"; charset=utf-8")
-	public Response adjustValue(@PathParam("tableName")String tableName, MeasureAdjustment measureAdjustment) {
-		IMeasureAdjuster adjuster = MeasureAdjusterFactory.getMeasureAdjuster(measureAdjustment.getMeasureType());
-		adjuster.adjustMeasure(measureAdjustment);
+	public Response adjustValue(@PathParam("tableName")String tableName, @QueryParam("measureAdjustment")String measureAdjustment) {
+		//IMeasureAdjuster adjuster = MeasureAdjusterFactory.getMeasureAdjuster(measureAdjustment.getMeasureType());
+		//adjuster.adjustMeasure(measureAdjustment);
 		return Response.ok().build();
 	}
 
 	@POST
 	@Path("/tables/{tableName}/measures")
 	@Produces(MediaType.APPLICATION_JSON+"; charset=utf-8")
-	public Response createNewMeasure(@PathParam("tableName")String tableName, MeasureColumn measureColumn) {
-		if(measureColumn.getClientExpression()==null||measureColumn.getClientExpression().trim().isEmpty()) {
+	public Response createNewMeasure(@PathParam("tableName")String tableName) {
+		//if(measureColumn.getClientExpression()==null||measureColumn.getClientExpression().trim().isEmpty()) {
 			//add an extra column in table
 			//DBHelper.addColumnToTable(tableName, measureColumn);
-		}
+		//}
 		//add an extra virtual column as expression
 		//Table table = GlobalCache.getTable(tableName);
 		//table.addColumn(measureColumn);
@@ -239,7 +239,7 @@ public class DataFeeds {
 	@POST
 	@Path("/userViews/")
 	@Produces(MediaType.APPLICATION_JSON+"; charset=utf-8")
-	public Response CreateOrUpdateUserView(@PathParam("userViewId")String userViewId, String tableName, String userViewJson) {
+	public Response CreateOrUpdateUserView(@PathParam("userViewId")String userViewId, @QueryParam("tableName")String tableName, @QueryParam("userViewJson")String userViewJson) {
 		// TODO get userId from http body
 		// get userview json from db
 		return Response.ok().entity(userViewJson).build();

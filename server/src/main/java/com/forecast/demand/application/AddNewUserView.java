@@ -5,6 +5,6 @@ package com.forecast.demand.application;
  */
 public class AddNewUserView {
     public static void main(String[] args) throws Exception {
-        
+
     }
 }
