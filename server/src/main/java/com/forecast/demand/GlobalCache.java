@@ -5,7 +5,6 @@ import com.forecast.demand.common.XmlHelper;
 import com.forecast.demand.model.Table;
 import com.forecast.demand.model.UserView;
 import com.forecast.demand.util.DbOperation;
-import com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIConversion;
 import com.forecast.demand.exception.UserException;
 
 import java.util.*;
@@ -16,7 +15,7 @@ public class GlobalCache {
 
     public static void initialize() {
         tableCache = DbOperation.getTableMap();
-        userViewCache = DbOperation.getUserViewMap();
+        //userViewCache = DbOperation.getUserViewMap();
     }
 
     public static Table getTable(String tableName) throws UserException {

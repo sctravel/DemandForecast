@@ -107,7 +107,11 @@ public class DataFeeds {
 		columnNames.add(sqlGen.generateColumnFromGrain(timeGrain, userView.getDateColumnName()) + " AS " + userView.getDateColumnName());
 		List<String> measureList = userView.getMeasures();
 		for(String measure : measureList) {
-			columnNames.add( columnMap.get(measure).getAggregationType().toString() +"("+measure+")");
+			if(userView.getVirtualMeasureMap().containsKey(measure)) {
+				columnNames.add(columnMap.get(measure).getAggregationType().toString() + "(" + userView.getVirtualMeasureMap().get(measure) + ")");
+			} else {
+				columnNames.add(columnMap.get(measure).getAggregationType().toString() + "(" + measure + ")");
+			}
 		}
 
 		StringBuilder queryBuilder = new StringBuilder();
@@ -118,26 +122,25 @@ public class DataFeeds {
 		List<String> dimList = userView.getDimensions();
 		dimList.add(sqlGen.generateColumnFromGrain(timeGrain, userView.getDateColumnName()));
 		queryBuilder.append(sqlGen.generateGroupBy(dimList));
-/*
+
 		String query = queryBuilder.toString();
 		List<List<String>> queryResult = DBHelper.getQueryResult(query);
 		List<Map<String, String>> res = new ArrayList<Map<String, String>>();
 		for(List<String> list : queryResult) {
 			int idx = 0;
 			Map<String, String> map = new HashMap<>();
-			for(String dim : dimList) {
-				map.put(dim, list.get(idx++));
-			}
+			map.put(userView.getDateColumnName(), list.get(idx++));
+
 			for(String measure : measureList) {
 				map.put(measure, list.get(idx++));
 			}
 			res.add(map);
 		}
-*/
+
 		ObjectMapper mapper = new ObjectMapper();
 		String value = null;
 		try {
-			value = mapper.writeValueAsString("");
+			value = mapper.writeValueAsString(res);
 			System.out.println("JSON - " + value);
 		} catch (Exception e) {
 			e.printStackTrace();
