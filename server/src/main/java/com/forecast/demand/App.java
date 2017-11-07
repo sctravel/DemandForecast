@@ -86,6 +86,10 @@ public class App
                 "resources/realm.properties");
         server.addBean(loginService);
         ConstraintSecurityHandler security = new ConstraintSecurityHandler();
+        
+        // SecurityHandler security = basicAuth(); 
+        
+        
         server.setHandler(security);
         
         security.setHandler(handlerCollection);
@@ -128,9 +132,9 @@ public class App
         //XmlHelper.updateTableConfig("resources/YumSalesForecast.xml");
     }
     
-    private static final SecurityHandler basicAuth(String username, String password, String realm) throws IOException {    
-        File jdbcRealmFile = new File("jdbcrealm.properties");
-        LoginService l = new JDBCLoginService(realm, jdbcRealmFile.getAbsolutePath());
+    private static final SecurityHandler basicAuth() throws IOException {    
+        File jdbcRealmFile = new File("jdbc-realm.properties");
+        LoginService l = new JDBCLoginService("jdbc", jdbcRealmFile.getAbsolutePath());
         
         Constraint constraint = new Constraint();
         constraint.setName(Constraint.__BASIC_AUTH);
