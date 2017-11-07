@@ -12,11 +12,13 @@ CREATE TABLE Org
      ENGINE=InnoDB AUTO_INCREMENT=100000001 DEFAULT CHARSET=utf8;
 
 
+DROP TABLE Users;
 CREATE TABLE Users
      (userId INT PRIMARY KEY AUTO_INCREMENT,
      orgId INT,
      roleId INT,
      email VARCHAR(255) NOT NULL, 
+     userName VARCHAR(255) NOT NULL, 
      passwordHash VARCHAR(63) NOT NULL,
      firstName VARCHAR(20) NOT NULL,
      middleName VARCHAR(20) , 
@@ -59,4 +61,5 @@ CREATE TABLE RoleUser(
 	FOREIGN KEY (roleId) REFERENCES Role(roleId),
     FOREIGN KEY (userId) REFERENCES Users(userId)
 );
+
 
