@@ -25,7 +25,7 @@ public class AddNewUserView {
         Map<String, String> virtualMeasureMap = new HashMap<>();
         boolean isRelative = false;
         int relativeToStart = 0;
-        int relativeToEnd = 0
+        int relativeToEnd = 0;
 
         UserView userView = new UserView(username, tableName, measures, dimensions, grain, dateColumnName,
                 startDate, endDate, virtualMeasureMap, isRelative, relativeToStart, relativeToEnd);
