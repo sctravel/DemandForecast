@@ -253,6 +253,6 @@
 
     //// Angular Code ////
 
-    angular.module('ngJsTreeDemo').controller('treeCtrl', treeCtrl);
+    angular.module('demandForecastDemo').controller('treeCtrl', treeCtrl);
 
 })(angular);

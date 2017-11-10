@@ -3,9 +3,9 @@
 
     //// JavaScript Code ////
 
-   
-   
+
+
     //// Angular Code ////
-    angular.module('ngJsTreeDemo', ['ngJsTree', 'toaster', 'cgBusy','ngTouch', 'ui.grid', 'ui.grid.autoResize','ui.grid.edit', 'ui.grid.rowEdit', 'ui.grid.cellNav']);
+   angular.module('demandForecastDemo', ['ngJsTree', 'toaster', 'cgBusy','ngTouch', 'ui.grid', 'ui.grid.autoResize','ui.grid.edit', 'ui.grid.rowEdit', 'ui.grid.cellNav','tabCtrl','date','seriesSelectorCtrl']);
 
 })(angular);
