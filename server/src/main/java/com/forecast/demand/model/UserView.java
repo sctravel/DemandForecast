@@ -3,12 +3,13 @@ package com.forecast.demand.model;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.forecast.demand.common.StringUtil;
 
-import javax.ws.rs.core.Response;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
+import java.util.ArrayList;
 
 /**
  * Created by tuxi1 on 10/18/2017.
@@ -27,10 +28,18 @@ public class UserView {
 
     private Map<String, String> virtualMeasureMap;
 
-    public UserView(){}
+    private boolean isRelativeDate;
+    private int relativeToStart;
+    private int relativeToEnd;
+
+    public UserView(){
+        measures = new ArrayList<>();
+        dimensions = new ArrayList<>();
+        virtualMeasureMap = new HashMap<String, String>();
+    }
 
     public UserView(String username, String tableName, List<String> measures, List<String> dimensions, String grain, String dateColumnName,
-                    String startDate, String endDate, Map<String, String> virtualMeasureMap) {
+                    String startDate, String endDate, Map<String, String> virtualMeasureMap, boolean isRelativeDate, int relativeToStart, int relativeToEnd) {
         this.username = username;
         this.tableName = tableName;
         this.measures = measures;
@@ -40,6 +49,9 @@ public class UserView {
         this.defaultStartDate =  startDate;
         this.defaultEndDate = endDate;
         this.virtualMeasureMap = virtualMeasureMap;
+        this.isRelativeDate = isRelativeDate;
+        this.relativeToStart = relativeToStart;
+        this.relativeToEnd = relativeToEnd;
     }
 
     public int getId() {
@@ -115,6 +127,7 @@ public class UserView {
             return null;
         }
     }
+
     public String toJson(){
         ObjectMapper mapper = new ObjectMapper();
         String value = null;
