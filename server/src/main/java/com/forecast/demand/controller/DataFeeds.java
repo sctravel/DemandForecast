@@ -105,6 +105,7 @@ public class DataFeeds {
 
 		TimeGrain timeGrain = userView.getTimeGrain();
 		columnNames.add(sqlGen.generateColumnFromGrain(timeGrain, userView.getDateColumnName()) + " AS " + userView.getDateColumnName());
+		columnNames.addAll(userView.getDimensions());
 		List<String> measureList = userView.getMeasures();
 		for(String measure : measureList) {
 			if(userView.getVirtualMeasureMap().containsKey(measure)) {
