@@ -21,9 +21,6 @@
     <link href="css/ui-grid.css" rel="stylesheet"/>
     <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/smoothness/jquery-ui.min.css" rel="stylesheet" type="text/css" />
 
-
-
-
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -47,6 +44,7 @@
     <script src="js/treeCtrl.js"></script>
     <script src="js/tabCtrl.js"></script>
     <script src="js/seriesSelectorCtrl.js"></script>
+    <script src="js/setupPageCtrl.js"></script>
     <script src="js/datePicker.js"></script>
     <script src="js/metisMenu.js"></script>
     <script src="js/sb-admin-2.js"></script>
@@ -127,7 +125,8 @@
         </div>
         <!-- /.navbar-static-side -->
     </nav>
-    <div id="page-wrapper">
+
+    <div id="page-wrapper" ng-controller = "setupPageCtrl as vm">
         <!-- /.row -->
         <div id= "workSheetInfo" class="row"  ng-show="tab.isSet(1)">
             <div class="col-lg-12">
@@ -215,6 +214,7 @@
             </div>
         </div>
         <!-- /.col-lg-12 -->
+
         <div id= "time" class="row"  ng-show="tab.isSet(2)">
             <div class="col-lg-12">
                 <h1 class="page-header">时间设置</h1>
@@ -344,7 +344,7 @@
                             DataTables Advanced Tables
                         </div>
                         <!-- /.panel-heading -->
-                        <div class="panel-body" ng-controller = "seriesSelectorCtrl">
+                        <div class="panel-body">
                             <div class="row">
                                 <div class="col-lg-4">
                                     <div class="panel panel-default">
@@ -353,7 +353,7 @@
                                         </div>
                                         <!-- /.panel-heading -->
                                         <div class="panel-body">
-                                            <select size="5" multiple ng-model="available" ng-options="client as client.name for client in availableclients" class="col-lg-12"></select>
+                                            <select size="5" multiple ng-model="allMeasures" ng-options="measure as measure.name for measure in measures" class="col-lg-12"></select>
                                             <!-- /.table-responsive -->
                                         </div>
                                         <!-- /.panel-body -->
@@ -365,7 +365,7 @@
                                     <div class="row">
                                         <div class="col-lg-5"></div>
                                         <div class="col-lg-2">
-                                            <button id="moveright" class="btn btn-default btn-block" style="border:0px" ng-click="moveItem(available[0], availableclients,selectedclients)"><a class="fa fa-angle-right" aria-hidden="true"></a></button>
+                                            <button id="moveright" class="btn btn-default btn-block" style="border:0px" ng-click="moveItem(allMeasures[0], measures,selectedMeasures)"><a class="fa fa-angle-right" aria-hidden="true"></a></button>
                                         </div>
                                         <div class="col-lg-5"></div>
 
@@ -373,20 +373,20 @@
                                     <div class="row">
                                         <div class="col-lg-5"></div>
                                         <div class="col-lg-2">
-                                            <button id="moverightall" class="btn btn-default btn-block" style="border:0px" ng-click="moveAll(availableclients,selectedclients)" ><a class="fa fa-angle-double-right" aria-hidden="true"></a></button>
+                                            <button id="moverightall" class="btn btn-default btn-block" style="border:0px" ng-click="moveAll(measures,selectedMeasures)" ><a class="fa fa-angle-double-right" aria-hidden="true"></a></button>
                                         </div>
                                         <div class="col-lg-5"></div>
                                     </div>
                                     <div class="row">
                                         <div class="col-lg-5"></div>
                                         <div class="col-lg-2">
-                                            <button id="move left" class="btn btn-default btn-block"  style="border:0px" ng-click="moveItem(selected[0], selectedclients,availableclients)" ><a class="fa fa-angle-left" aria-hidden="true"></a></button>
+                                            <button id="move left" class="btn btn-default btn-block"  style="border:0px" ng-click="moveItem(selectedMeasures[0], selectedMeasures,measures)" ><a class="fa fa-angle-left" aria-hidden="true"></a></button>
                                         </div>
                                         <div class="col-lg-5"></div>
                                     </div>
                                     <div class="row">
                                         <div class="col-lg-5"></div>
-                                        <div class="col-lg-2"><button id="moveleftall" style="border:0px" class="btn btn-default btn-block" ng-click="moveAll(selectedclients,availableclients)" ><a class="fa fa-angle-double-left" aria-hidden="true"></a></button>
+                                        <div class="col-lg-2"><button id="moveleftall" style="border:0px" class="btn btn-default btn-block" ng-click="moveAll(selectedMeasures,measures)" ><a class="fa fa-angle-double-left" aria-hidden="true"></a></button>
                                         </div>
                                         <div class="col-lg-5"></div>
                                     </div>
@@ -399,7 +399,7 @@
                                         </div>
                                         <!-- /.panel-heading -->
                                         <div class="panel-body">
-                                            <select size="5" multiple ng-model="selected" ng-options="client as client.name for client in selectedclients"  class="col-lg-12"></select>
+                                            <select size="5" multiple ng-model="selectedMeasures" ng-options="measure as measure.name for measure in selectedMeasures"  class="col-lg-12"></select>
                                             <!-- /.table-responsive -->
                                         </div>
                                         <!-- /.panel-body -->
@@ -419,18 +419,19 @@
             <div class="col-lg-12">
                 <h1 class="page-header">维度</h1>
             </div>
-            <div class="row" ng-controller="treeCtrl as vm">
-                <div class="col-lg-12">
+            <div class="row">
+                <div class="col-lg-4"></div>
+                <div class="col-lg-4">
                     <div class="panel panel-default">
                         <!-- /.panel-heading -->
-                        <div class="panel-body" ng-controller = "seriesSelectorCtrl">
+                        <div class="panel-body" >
                             <div cg-busy="vm.promise">
                                 <toaster-container></toaster-container>
                                 <div class="panel panel-default">
                                     <div class="panel-heading"><i class="glyphicon"></i>Dimensions</div>
                                     <div class="panel-body">
                                         <div id="dimensions" js-tree="vm.treeConfig" should-apply="vm.applyModelChanges()"
-                                             ng-model="vm.treeData" tree="vm.treeInstanceDimensions" tree-events="open_node:open_nodeCB;before_open: before_openCB">
+                                             ng-model="vm.dimensionTreeData" tree="vm.dimensionsTree" >
                                         </div>
                                     </div>
                                 </div>
@@ -438,11 +439,51 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-lg-4"></div>
+
             </div>
         </div>
 
 
-        <div id= "filter" class="row"  ng-show="tab.isSet(5)"> filter </div>
+        <div id= "filter" class="row"  ng-show="tab.isSet(5)">
+            <div class="col-lg-12">
+                <h1 class="page-header">Filter</h1>
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="panel panel-default">
+                        <!-- /.panel-heading -->
+                        <div class="panel-body" >
+                            <div cg-busy="vm.promise">
+                                <toaster-container></toaster-container>
+                                <div class="panel panel-default">
+                                    <div class="panel-heading"><i class="glyphicon"></i>Dimensions</div>
+                                    <div class="panel-body">
+                                        <div id="filters" js-tree="vm.filterTreeConfig" should-apply="vm.applyModelChanges()"
+                                             ng-model="vm.filterTreeData" tree="vm.filterTree" tree-events="changed.jstree:selection_nodeCB" >
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Available Values
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <select size="5" multiple ng-model="availableDimensions" ng-options="level as level.name for level in availableDimensions" class="col-lg-12"></select>
+                            <!-- /.table-responsive -->
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                </div>
+            </div>
+
+        </div>
 
 
     </div>
