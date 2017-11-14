@@ -11,11 +11,20 @@ import java.util.*;
 
 public class GlobalCache {
     private static Map<String, Table> tableCache = new HashMap<>();
-    private static Map<String, UserView> userViewCache = new HashMap<>();
+    private static Map<String, Map<String, String>> userViewCache = new HashMap<>(); // userId - Map<userViewName, json>
 
     public static void initialize() {
         tableCache = DbOperation.getTableMap();
-        //userViewCache = DbOperation.getUserViewMap();
+        userViewCache = DbOperation.getUserViewMap();
+    }
+
+    public static void addToUserViewCache(String userId, String userViewName, String userViewJson) {
+        if(userViewCache.containsKey(userId)) {
+            userViewCache.get(userId).put(userViewName, userViewJson);
+        } else {
+            Map<String, String> map = new HashMap<>();
+            map.put(userViewName, userViewJson);
+        }
     }
 
     public static Table getTable(String tableName) throws UserException {
@@ -26,11 +35,11 @@ public class GlobalCache {
         }
     }
 
-    public static UserView getUserView(String userViewId) throws UserException {
-        if(userViewCache.containsKey(userViewId)) {
-            return userViewCache.get(userViewId);
+    public static Map<String, String> getUserViewMap(String userId) throws UserException {
+        if(userViewCache.containsKey(userId)) {
+            return userViewCache.get(userId);
         } else {
-            throw new UserException(String.format("userViewId - {%s} doesn't exist", userViewId));
+            return new HashMap<>();
         }
     }
 
