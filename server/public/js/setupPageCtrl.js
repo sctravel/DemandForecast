@@ -1,10 +1,14 @@
 angular.module('setupPageCtrl', []).controller('setupPageCtrl', function($scope,$http,toaster) {
-
+    $scope.view = {};
     $scope.measures = [];
-    $scope.selectedMeasures = [];
-    $scope.dimensions = [];
+    $scope.toMoveMeasures = [];
+    $scope.selectedMeasures=[];
+    $scope.view["dimensions"] = {};
     $scope.selectedDimensions = [];
     $scope.availableDimensions = [];
+    $scope.filters = {};
+    $scope.timeRangePos=[1,2,3,4,5];
+    $scope.timeRangeNeg=[-1,-2,-3,-4,-5];
 
 
     $scope.moveItem = function(item, from, to) {
@@ -25,6 +29,7 @@ angular.module('setupPageCtrl', []).controller('setupPageCtrl', function($scope,
             to.push(item);
         });
         from.length = 0;
+
     };
 
     $scope.selection_nodeCB = function(e, data){
@@ -36,16 +41,58 @@ angular.module('setupPageCtrl', []).controller('setupPageCtrl', function($scope,
 
         var levelUrl = '/data/tables/YumSalesForecast/distinctValues?dimList=' + level;
          $http.get(levelUrl).then(function getSuccess(response) {
-         dataddd = response.data
                 for(var i = 0; i < response.data.length-3; i++){
                    var dimension = {id : i, name : response.data[i]};
                    $scope.availableDimensions.push(dimension);
 
                 }
-                aaa =  $scope.availableDimensions;
          })
 
        }
+
+    }
+
+    $scope.addFilters = function(){
+
+       var filterDimension = vm.filterTree.jstree(true).get_selected();
+       if( $scope.filters[filterDimension] == undefined){
+             $scope.filters[filterDimension] = [];
+       }
+       for( var i = 0; i < $scope.availableDimensionsSelected.length; i++){
+                  $scope.filters[filterDimension].push($scope.availableDimensionsSelected[i].name[0]);
+       }
+
+//       if($scope.availableDimensionsSelected.length >1){
+//            filters = filters + filterDimension + " in " + "(";
+//            for( var i = 0; i < $scope.availableDimensionsSelected.length; i++){
+//               filters = filters +  $scope.availableDimensionsSelected[i].name + ",";
+//            }
+//            filters = filters.substring(0,filters.length-1);
+//            filters = filters + ")";
+//       }else {
+//            filters = vm.filterTree.jstree(true).get_selected() + " = " + $scope.availableDimensionsSelected[0].name;
+//       }
+    }
+
+    $scope.save = function(){
+        $scope.view["series"] =  $scope.selectedMeasures;
+        dimensionsTreeInstance = vm.dimensionsTree.jstree(true)
+        treeSelected = dimensionsTreeInstance.get_selected();
+        for(var i = 0; i < treeSelected.length; i++){
+           if(dimensionsTreeInstance.get_node(treeSelected[i]).parent == "#") {
+                 $scope.view.dimensions[treeSelected[i]] = [];
+           }else{
+                if( $scope.view.dimensions[dimensionsTreeInstance.get_node(treeSelected[i]).parent] == undefined) {
+                    $scope.view.dimensions[dimensionsTreeInstance.get_node(treeSelected[i]).parent] =[];
+                }
+
+                $scope.view.dimensions[dimensionsTreeInstance.get_node(treeSelected[i]).parent].push(treeSelected[i]);
+           }
+        }
+        $scope.view.filters = $scope.filters;
+
+         sss = $scope.view;
+
 
     }
 

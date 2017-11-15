@@ -141,7 +141,7 @@
                                 <div class="form-group">
                                     <label class="control-label col-sm-1" style="text-align:left">所属模块:</label>
                                     <div class="col-sm-11">
-                                        <select class="form-control">
+                                        <select ng-model ="view.tableName"   class="form-control">
                                             <option>所属模块1</option>
                                             <option>所属模块2</option>
                                             <option>所属模块3</option>
@@ -155,7 +155,7 @@
                                 <div class="form-group">
                                     <label class="control-label col-sm-1" style="text-align:left">所属群组:</label>
                                     <div class="col-sm-11">
-                                        <select class="form-control">
+                                        <select ng-model ="view.userGroup" class="form-control">
                                             <option>所属群组1</option>
                                             <option>所属群组2</option>
                                             <option>所属群组3</option>
@@ -168,7 +168,7 @@
                                 <div class="form-group">
                                     <label class="control-label col-sm-1" style="text-align:left">用户视图名称:</label>
                                     <div class="col-sm-11">
-                                        <input class="form-control" placeholder="请输入用户视图名称"/>
+                                        <input  ng-model ="view.name" class="form-control" placeholder="请输入用户视图名称"/>
                                         <p class="help-block">用户视图名称</p>
                                     </div>
                                 </div>
@@ -176,7 +176,7 @@
                                 <div class="form-group">
                                     <label class="control-label col-sm-1" style="text-align:left">用户视图详细说明:</label>
                                     <div class="col-sm-11">
-                                        <textarea class="form-control" placeholder="请输入用户视图详细说明" style="height:100px"></textarea>
+                                        <textarea  ng-model = "view.desc"  class="form-control" placeholder="请输入用户视图详细说明" style="height:100px"></textarea>
                                         <p class="help-block">用户视图详细说明</p>
                                     </div>
                                 </div>
@@ -185,10 +185,10 @@
                                     <label class="control-label col-sm-1" style="text-align:left">访问类型:</label>
                                     <div class="col-sm-11">
                                         <label class="radio-inline">
-                                            <input type="radio" name="optionsRadiosInline" id="optionsRadiosInline1" value="option1" checked>公开
+                                            <input ng-model="view.type" type="radio" name="optionsRadiosInline" id="optionsRadiosInline1" value="public" checked>公开
                                         </label>
                                         <label class="radio-inline">
-                                            <input type="radio" name="optionsRadiosInline" id="optionsRadiosInline2" value="option2">私有
+                                            <input ng-model="view.type" type="radio" name="optionsRadiosInline" id="optionsRadiosInline2" value="private">私有
                                         </label>
                                     </div>
 
@@ -201,11 +201,7 @@
                                         <p class="help-block">分享链接</p>
                                     </div>
                                 </div>
-                                <div class="form-group row">
-                                    <div class="col-lg-2" ><button class="btn btn-success btn-block" >保存工作表</button> </div>
-                                    <div class="col-lg-8"></div>
-                                    <div class="col-lg-2" ><button class="btn btn-default btn-block" >放弃修改</button> </div>
-                                </div>
+
                             </form>
                         </div>
                         <div class="col-lg-3"></div>
@@ -228,7 +224,7 @@
                                 <div class="form-group">
                                     <label class="control-label col-sm-1" style="text-align:left">时间粒度:</label>
                                     <div class="col-sm-3">
-                                        <select class="form-control">
+                                        <select ng-module="view.granularity"  class="form-control">
                                             <option>年</option>
                                             <option>季度</option>
                                             <option>月</option>
@@ -244,27 +240,26 @@
                                     <label class="control-label col-sm-1" style="text-align:left">时间范围:</label>
                                     <div class="col-sm-10,formControl">
                                         <div class="row">
-                                            <div class="col-sm-5">相对于今天</div>
-                                            <div class="col-sm-5">固定值</div>
+                                            <div class="col-sm-5">
+                                                <input ng-model="view.relativeOrFix" type="radio" name="relativeOrFixRadio" id="relativeToday" value="relativeToday" checked>相对于今天
+                                            </div>
+                                            <div class="col-sm-5">
+                                                <input ng-model="view.relativeOrFix" type="radio" name="relativeOrFixRadio" id="Fix" value="fix" >固定时间范围
+                                            </div>
                                         </div>
                                     </div>
 
                                     <label class="control-label col-sm-1" style="text-align:left"></label>
                                     <div class="col-lg-10,formControl">
                                         <div class="row">
-                                            <div class="col-sm-1">从：</div>
+                                            <div class="col-sm-1">从:</div>
                                             <div class="col-lg-4">
-                                                <select class="selectpicker">
-                                                    <option>-1</option>
-                                                    <option>-2</option>
-                                                    <option>-3</option>
-                                                    <option>-4</option>
-                                                    <option>-5</option>
+                                                <select ng-disabled = "view.relativeOrFix != 'relativeToday'" ng-model ="view.From"  ng-options="x for x in timeRangeNeg" class="selectpicker">
                                                 </select>
                                             </div>
                                             <div class="col-sm-1">从：</div>
                                             <div class="col-lg-4" >
-                                                <input type="text" datepicker  />
+                                                <input ng-disabled = "view.relativeOrFix!='fix'" ng-model ="view.From" type="text" datepicker  />
                                             </div>
                                         </div>
                                     </div>
@@ -274,17 +269,13 @@
                                         <div class="row">
                                             <div class="col-sm-1">到：</div>
                                             <div class="col-lg-4">
-                                                <select class="selectpicker">
-                                                    <option>1</option>
-                                                    <option>2</option>
-                                                    <option>3</option>
-                                                    <option>4</option>
-                                                    <option>5</option>
+                                                <select ng-disabled = "view.relativeOrFix != 'relativeToday'"  ng-model ="view.To" ng-options="x for x in timeRangePos" class="selectpicker">
+
                                                 </select>
                                             </div>
                                             <div class="col-sm-1">到：</div>
                                             <div class="col-lg-4" >
-                                                <input type="text" datepicker  />
+                                                <input ng-disabled = "view.relativeOrFix != 'fix'" ng-model ="view.To" type="text" datepicker  />
                                             </div>
                                         </div>
                                     </div>
@@ -292,7 +283,7 @@
                                     <label class="control-label col-sm-1" style="text-align:left"></label>
                                     <div class="col-sm-10,formControl">
                                         <div class="row">
-                                            <div class="col-sm-10">相对于最后一次销售</div>
+                                            <div class="col-sm-10"> <input ng-model="view.relativeOrFix" type="radio" name="relativeOrFixRadio" id="relativeTolastSale" value="relativeTolastSale" >固定时间范围</div>
                                         </div>
                                     </div>
 
@@ -301,22 +292,12 @@
                                         <div class="row">
                                             <div class="col-sm-1">从：</div>
                                             <div class="col-lg-4">
-                                                <select class="selectpicker">
-                                                    <option>-1</option>
-                                                    <option>-2</option>
-                                                    <option>-3</option>
-                                                    <option>-4</option>
-                                                    <option>-5</option>
+                                                <select ng-disabled = "view.relativeOrFix != 'relativeTolastSale'" ng-options="x for x in timeRangeNeg" ng-model ="view.From" class="selectpicker">
                                                 </select>
                                             </div>
                                             <div class="col-sm-1">到：</div>
                                             <div class="col-lg-4" >
-                                                <select class="selectpicker">
-                                                    <option>1</option>
-                                                    <option>2</option>
-                                                    <option>3</option>
-                                                    <option>4</option>
-                                                    <option>5</option>
+                                                <select ng-disabled = "view.relativeOrFix != 'relativeTolastSale'" ng-model ="view.To" ng-options="x for x in timeRangePos" class="selectpicker">
                                                 </select>
                                             </div>
                                         </div>
@@ -399,7 +380,8 @@
                                         </div>
                                         <!-- /.panel-heading -->
                                         <div class="panel-body">
-                                            <select size="5" multiple ng-model="selectedMeasures" ng-options="measure as measure.name for measure in selectedMeasures"  class="col-lg-12"></select>
+                                            <select size="5" multiple ng-model="movedMeasures" ng-options="measure as measure.name for measure in selectedMeasures"  class="col-lg-12"></select>
+                                            {{selectedMeasures}}
                                             <!-- /.table-responsive -->
                                         </div>
                                         <!-- /.panel-body -->
@@ -475,7 +457,8 @@
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
-                            <select size="5" multiple ng-model="availableDimensions" ng-options="level as level.name for level in availableDimensions" class="col-lg-12"></select>
+                            <select size="5" multiple ng-model="availableDimensionsSelected" ng-options="level as level.name for level in availableDimensions" class="col-lg-12"></select>
+                            <button class="col-lg-1 btn btn-success btn-block" ng-click="addFilters()" >添加</button>
                             <!-- /.table-responsive -->
                         </div>
                         <!-- /.panel-body -->
@@ -483,10 +466,39 @@
                 </div>
             </div>
 
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="panel panel-default">
+                        <!-- /.panel-heading -->
+                        <div class="panel-body" >
+                                <div class="panel panel-default">
+                                    <div class="panel-heading"><i class="glyphicon"></i>Filters</div>
+                                    <table class="panel-body">
+                                        <tr class="row" ng-repeat="(key, value) in filters">
+                                            <td class="col-lg-4">{{key + (value.length >1 ? " in ":" = ")}}   </td>
+                                            <td ng-repeat="val in value">
+                                                 {{ value.length == 1 ? val :($index == 0 ? "(" + val + "," : ($index==value.length-1 ? val + ")" : val + "," ))}}
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+
+
         </div>
 
 
     </div>
+        <div class="form-group row">
+            <div class="col-lg-3"></div>
+            <div class="col-lg-1" ><button class="btn btn-success btn-block" ng-click="save()" >保存工作表</button> </div>
+            <div class="col-lg-4"></div>
+            <div class="col-lg-1" ><button class="btn btn-default btn-block" >放弃修改</button> </div>
+            <div class="col-lg-3"></div>
+        </div>
+
     <!-- /#page-wrapper -->
 </div>
 <!-- /#wrapper -->
