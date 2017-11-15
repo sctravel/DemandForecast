@@ -1,7 +1,9 @@
 package com.forecast.demand.util;
 
+import com.forecast.demand.GlobalCache;
 import com.forecast.demand.common.DBHelper;
 import com.forecast.demand.common.XmlHelper;
+import com.forecast.demand.model.ColumnType;
 import com.forecast.demand.model.Table;
 import com.forecast.demand.model.UserView;
 
@@ -28,24 +30,40 @@ public class DbOperation {
         return map;
     }
 
-    public static void createUserView(String userId, String tableName, String userViewJson) {
-        String sql = "";
+    public static void deleteUserView(String userId, String userViewName) {
+        String sql = "Delete From UserViews where userId = ? and userViewName = ?";
+        DBHelper.runQuery(sql, new String[]{userId, userViewName}, new ColumnType[]{ColumnType.INTEGER, ColumnType.STRING});
     }
 
-    public static void updateUserView(int userViewId, String userId, String tableName, String userViewJson) {
-        String sql = "Update UserViews set details = ? where userId = ? and tableName = ? and id = ?" ;
+    public static void createUserView(String userId, String userViewName, String userViewJson) {
+        String sql = "Insert into UserViews (userViewName, userId, details) Values (?, ?, ?, ?)";
+        DBHelper.runQuery(sql, new String[]{userViewName, userId, userViewJson},
+                new ColumnType[]{ColumnType.STRING, ColumnType.INTEGER, ColumnType.STRING, ColumnType.STRING});
+        GlobalCache.addToUserViewCache(userViewName, userId, userViewJson);
     }
 
-    public static Map<String, UserView> getUserViewMap() {
-        Map<String, UserView> map = new HashMap<>();
-        String query = "select id, details, tableName, userId from UserViews";
+    public static void updateUserView(String userId, String userViewName, String userViewJson) {
+        String sql = "Update UserViews set details = ? where userId = ? and userViewName = ?" ;
+        DBHelper.runQuery(sql, new String[]{userViewJson, userId, userViewName}, new ColumnType[] {ColumnType.STRING, ColumnType.INTEGER, ColumnType.STRING});
+    }
+
+    public static Map<String, Map<String, String>> getUserViewMap() {
+        Map<String, Map<String, String>> map = new HashMap<>();
+        String query = "select id, userId, userViewName, details, tableName from UserViews";
         List<List<String>> res = DBHelper.getQueryResult(query);
         for(List<String> list : res) {
             String userViewId = list.get(0);
-            String userViewJson = list.get(1);
-            UserView userView = UserView.fromJson(userViewJson);
-            if(userView!=null)
-                map.put(userViewId, userView);
+            String userId = list.get(1);
+            String userViewName = list.get(2);
+            String userViewJson = list.get(3);
+            if(map.containsKey(userId)) {
+                Map<String, String> nameMap = map.get(userId);
+                nameMap.put(userViewName, userViewJson);
+            } else {
+                Map<String, String> nameMap = new HashMap<>();
+                map.put(userId, nameMap);
+                nameMap.put(userViewName, userViewJson);
+            }
         }
         return map;
     }

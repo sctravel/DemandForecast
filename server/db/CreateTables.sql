@@ -31,14 +31,16 @@ CREATE TABLE YumSalesForecast (
 
 CREATE TABLE UserViews (
     id INT PRIMARY KEY AUTO_INCREMENT,
+    userViewName varchar(128) NOT NULL,
     userId INT NOT NULL,
-    tableName varchar(128) NOT NULL,
+    tableName varchar(128),
     details blob ,
     createdTime timestamp default now(),
     lastUpdatedTime timestamp default now() on update now(),
     lastUpdatedBy VARCHAR(15) default 'sysuser',
-    FOREIGN KEY (userId) REFERENCES Users(userId),
-    FOREIGN KEY (tableName) REFERENCES TableMetadata(TableName)
+    UNIQUE(userViewName, userId)
+    --FOREIGN KEY (userId) REFERENCES Users(userId),
+    --FOREIGN KEY (tableName) REFERENCES TableMetadata(TableName)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 CREATE UNIQUE INDEX UserViews_userId on UserViews (userId);

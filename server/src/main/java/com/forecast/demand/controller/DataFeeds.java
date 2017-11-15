@@ -9,8 +9,10 @@ import com.forecast.demand.queryGen.IMeasureAdjuster;
 import com.forecast.demand.queryGen.MeasureAdjusterFactory;
 import com.forecast.demand.queryGen.SQLQueryGenerator;
 import com.forecast.demand.queryGen.IQueryGenerator;
+import com.forecast.demand.util.DbOperation;
 
 import java.util.*;
+import java.util.function.DoubleBinaryOperator;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -92,27 +94,28 @@ public class DataFeeds {
 	}
 
 	@GET
-	@Path("/tables/{tableName}/userView/{userViewId}/query")
+	@Path("/tables/{tableName}/query")
 	@Produces(MediaType.APPLICATION_JSON+"; charset=utf-8")
-	public Response query(@PathParam("tableName")String tableName, @QueryParam("userViewId") String userViewId,
-						  @QueryParam("filter") String filter) throws Exception {
+	public Response query(@PathParam("tableName")String tableName, @QueryParam("dimList") String dimListString,
+						  @QueryParam("measureList") String measureListString, @QueryParam("filter") String filter,
+						  @QueryParam("timeGrain") String timeGrain) throws Exception {
 		List<String> columnNames = new ArrayList<>();
 		//TODO check userId equals userView.getUserName()
 		Table table = GlobalCache.getTable(tableName);
 		Map<String, Column> columnMap = table.getColumnMap();
+		List<String> dimList = Arrays.asList(dimListString.split(","));
+		List<String> measureList = Arrays.asList(measureListString.split(","));
 
-		UserView userView = GlobalCache.getUserView(userViewId);
 
-		TimeGrain timeGrain = userView.getTimeGrain();
-		columnNames.add(sqlGen.generateColumnFromGrain(timeGrain, userView.getDateColumnName()) + " AS " + userView.getDateColumnName());
-		columnNames.addAll(userView.getDimensions());
-		List<String> measureList = userView.getMeasures();
+		TimeGrain timeGrain = StringUtil.searchEnum(TimeGrain.class, timeGrain);
+		columnNames.add(sqlGen.generateColumnFromGrain(timeGrain, "SalesDate") + " AS " + "SalesDate");
+		columnNames.addAll(dimList);
 		for(String measure : measureList) {
-			if(userView.getVirtualMeasureMap().containsKey(measure)) {
-				columnNames.add(columnMap.get(measure).getAggregationType().toString() + "(" + userView.getVirtualMeasureMap().get(measure) + ")");
-			} else {
-				columnNames.add(columnMap.get(measure).getAggregationType().toString() + "(" + measure + ")");
-			}
+			//if(userView.getVirtualMeasureMap().containsKey(measure)) {
+			//	columnNames.add(columnMap.get(measure).getAggregationType().toString() + "(" + userView.getVirtualMeasureMap().get(measure) + ")");
+			//} else {
+			columnNames.add(columnMap.get(measure).getAggregationType().toString() + "(" + measure + ")");
+			//}
 		}
 
 		StringBuilder queryBuilder = new StringBuilder();
@@ -120,8 +123,7 @@ public class DataFeeds {
 		queryBuilder.append(sqlGen.generateFrom(tableName));
 		if(filter!=null&&!filter.trim().isEmpty()) queryBuilder.append(sqlGen.generateWhere(filter));
 
-		List<String> dimList = userView.getDimensions();
-		dimList.add(sqlGen.generateColumnFromGrain(timeGrain, userView.getDateColumnName()));
+		dimList.add(sqlGen.generateColumnFromGrain(timeGrain, "SalesDate"));
 		queryBuilder.append(sqlGen.generateGroupBy(dimList));
 
 		String query = queryBuilder.toString();
@@ -130,7 +132,7 @@ public class DataFeeds {
 		for(List<String> list : queryResult) {
 			int idx = 0;
 			Map<String, String> map = new HashMap<>();
-			map.put(userView.getDateColumnName(), list.get(idx++));
+			map.put("SalesDate", list.get(idx++));
 
 			for(String measure : measureList) {
 				map.put(measure, list.get(idx++));
@@ -151,10 +153,10 @@ public class DataFeeds {
 	}
 
 	@GET
-	@Path("/tables/{tableName}/query")
+	@Path("/tables/{tableName}/query2")
 	@Produces(MediaType.APPLICATION_JSON+"; charset=utf-8")
 	public Response query(@PathParam("tableName")String tableName, @QueryParam("dimList") String dimListString,
-		  @QueryParam("measureList") String measureListString, @QueryParam("filter") String filter) throws Exception {
+		  @QueryParam("measureList") String measureListString, @QueryParam("filter") String filter, @QueryParam("timeGrain") String timeGrain) throws Exception {
         List<String> columnNames = new ArrayList<>();
         List<String> dimList = Arrays.asList(dimListString.split(","));
 		List<String> measureList = Arrays.asList(measureListString.split(","));
@@ -228,31 +230,38 @@ public class DataFeeds {
 	}
 
 	@GET
-	@Path("/userViews/{userViewId}")
+	@Path("/users/{userId}/userViews")
 	@Produces(MediaType.APPLICATION_JSON+"; charset=utf-8")
-	public Response getUserView(@PathParam("userViewId")String userViewId) {
-		// TODO get userId from http body
-		// get userview json from db
-		String userViewJson = "";
-		return Response.ok().entity(userViewJson).build();
+	public Response getUserViewMap(@PathParam("userId") String userId) throws Exception{
+		Map<String, String> map = GlobalCache.getUserViewMap(userId);
+		return Response.ok().entity(map).build();
 	}
 
 	@POST
-	@Path("/userViews/")
+	@Path("/users/{userId}/userViews/{userViewName}")
 	@Produces(MediaType.APPLICATION_JSON+"; charset=utf-8")
-	public Response CreateOrUpdateUserView(@PathParam("userViewId")String userViewId, @QueryParam("tableName")String tableName, @QueryParam("userViewJson")String userViewJson) {
+	public Response CreateUserView(@PathParam("userId")String userId, @PathParam("userViewName")String userViewName, @QueryParam("userViewJson")String userViewJson) {
 		// TODO get userId from http body
-		// get userview json from db
+		DbOperation.createUserView(userId, userViewName, userViewJson);
+		return Response.ok().entity(userViewJson).build();
+	}
+
+	@PUT
+	@Path("/users/{userId}/userViews/{userViewName}")
+	@Produces(MediaType.APPLICATION_JSON+"; charset=utf-8")
+	public Response CreateUserView(@PathParam("userId")String userId, @PathParam("userViewName")String userViewName, @QueryParam("userViewJson")String userViewJson) {
+		// TODO get userId from http body
+		DbOperation.updateUserView(userId, userViewName, userViewJson);
 		return Response.ok().entity(userViewJson).build();
 	}
 
 	@DELETE
-	@Path("/userViews/{userViewName}")
+	@Path("/users/{userId}/userViews/{userViewName}")
 	@Produces(MediaType.APPLICATION_JSON+"; charset=utf-8")
-	public Response deleteUserView(@PathParam("userViewName")String userViewName) {
+	public Response deleteUserView(@PathParam("userId")String userId, @PathParam("userViewName")String userViewName) {
 		// TODO get userId from http body
 		// delete userview from db
-		String userViewJson = "";
-		return Response.ok().entity(userViewJson).build();
+		DbOperation.deleteUserView(userId, userViewName);
+		return Response.ok().entity().build();
 	}
 }

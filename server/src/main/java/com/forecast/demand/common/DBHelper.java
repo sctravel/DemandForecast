@@ -48,6 +48,7 @@ public class DBHelper {
         return connection;
     }
 
+
     public static void runQuery(String query, String[] values, ColumnType[] types) {
         Connection connection = null;
         PreparedStatement preparedStmt = null;
