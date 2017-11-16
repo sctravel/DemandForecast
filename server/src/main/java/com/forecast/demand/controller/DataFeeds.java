@@ -98,7 +98,7 @@ public class DataFeeds {
 	@Produces(MediaType.APPLICATION_JSON+"; charset=utf-8")
 	public Response query(@PathParam("tableName")String tableName, @QueryParam("dimList") String dimListString,
 						  @QueryParam("measureList") String measureListString, @QueryParam("filter") String filter,
-						  @QueryParam("timeGrain") String timeGrain) throws Exception {
+						  @QueryParam("timeGrain") String timeGrainString) throws Exception {
 		List<String> columnNames = new ArrayList<>();
 		//TODO check userId equals userView.getUserName()
 		Table table = GlobalCache.getTable(tableName);
@@ -107,7 +107,7 @@ public class DataFeeds {
 		List<String> measureList = Arrays.asList(measureListString.split(","));
 
 
-		TimeGrain timeGrain = StringUtil.searchEnum(TimeGrain.class, timeGrain);
+		TimeGrain timeGrain = StringUtil.searchEnum(TimeGrain.class, timeGrainString);
 		columnNames.add(sqlGen.generateColumnFromGrain(timeGrain, "SalesDate") + " AS " + "SalesDate");
 		columnNames.addAll(dimList);
 		for(String measure : measureList) {
@@ -155,8 +155,8 @@ public class DataFeeds {
 	@GET
 	@Path("/tables/{tableName}/query2")
 	@Produces(MediaType.APPLICATION_JSON+"; charset=utf-8")
-	public Response query(@PathParam("tableName")String tableName, @QueryParam("dimList") String dimListString,
-		  @QueryParam("measureList") String measureListString, @QueryParam("filter") String filter, @QueryParam("timeGrain") String timeGrain) throws Exception {
+	public Response query2(@PathParam("tableName")String tableName, @QueryParam("dimList") String dimListString,
+		  @QueryParam("measureList") String measureListString, @QueryParam("filter") String filter, @QueryParam("timeGrain") String timeGrainString) throws Exception {
         List<String> columnNames = new ArrayList<>();
         List<String> dimList = Arrays.asList(dimListString.split(","));
 		List<String> measureList = Arrays.asList(measureListString.split(","));
@@ -240,7 +240,7 @@ public class DataFeeds {
 	@POST
 	@Path("/users/{userId}/userViews/{userViewName}")
 	@Produces(MediaType.APPLICATION_JSON+"; charset=utf-8")
-	public Response CreateUserView(@PathParam("userId")String userId, @PathParam("userViewName")String userViewName, @QueryParam("userViewJson")String userViewJson) {
+	public Response createUserView(@PathParam("userId")String userId, @PathParam("userViewName")String userViewName, @QueryParam("userViewJson")String userViewJson) {
 		// TODO get userId from http body
 		DbOperation.createUserView(userId, userViewName, userViewJson);
 		return Response.ok().entity(userViewJson).build();
@@ -249,7 +249,7 @@ public class DataFeeds {
 	@PUT
 	@Path("/users/{userId}/userViews/{userViewName}")
 	@Produces(MediaType.APPLICATION_JSON+"; charset=utf-8")
-	public Response CreateUserView(@PathParam("userId")String userId, @PathParam("userViewName")String userViewName, @QueryParam("userViewJson")String userViewJson) {
+	public Response updateUserView(@PathParam("userId")String userId, @PathParam("userViewName")String userViewName, @QueryParam("userViewJson")String userViewJson) {
 		// TODO get userId from http body
 		DbOperation.updateUserView(userId, userViewName, userViewJson);
 		return Response.ok().entity(userViewJson).build();
@@ -262,6 +262,6 @@ public class DataFeeds {
 		// TODO get userId from http body
 		// delete userview from db
 		DbOperation.deleteUserView(userId, userViewName);
-		return Response.ok().entity().build();
+		return Response.ok().build();
 	}
 }
