@@ -75,6 +75,7 @@ angular.module('setupPageCtrl', []).controller('setupPageCtrl', function($scope,
     }
 
     $scope.save = function(){
+    console.log("save");
         $scope.view["series"] =  $scope.selectedMeasures;
         dimensionsTreeInstance = vm.dimensionsTree.jstree(true)
         treeSelected = dimensionsTreeInstance.get_selected();
@@ -90,8 +91,16 @@ angular.module('setupPageCtrl', []).controller('setupPageCtrl', function($scope,
            }
         }
         $scope.view.filters = $scope.filters;
+        var userId = 123321;
+        var url = '/data/users' + '/'+ userId + '/userViews' + '/' + $scope.view.name;
+        console.log(url);
+        var data = JSON.stringify($scope.view);
+        $http.post(url, data).then(function(response) {
+           alert("userview successfully saved ");
+          }, function(response) {
+           alert("job failed");
+        });
 
-         sss = $scope.view;
 
 
     }

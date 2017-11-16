@@ -123,8 +123,9 @@ public class DataFeeds {
 		queryBuilder.append(sqlGen.generateFrom(tableName));
 		if(filter!=null&&!filter.trim().isEmpty()) queryBuilder.append(sqlGen.generateWhere(filter));
 
-		dimList.add(sqlGen.generateColumnFromGrain(timeGrain, "SalesDate"));
+		//dimList.add(sqlGen.generateColumnFromGrain(timeGrain, "SalesDate"));
 		queryBuilder.append(sqlGen.generateGroupBy(dimList));
+		queryBuilder.append("\n,"+ sqlGen.generateColumnFromGrain(timeGrain, "SalesDate"));
 
 		String query = queryBuilder.toString();
 		List<List<String>> queryResult = DBHelper.getQueryResult(query);
@@ -133,6 +134,9 @@ public class DataFeeds {
 			int idx = 0;
 			Map<String, String> map = new HashMap<>();
 			map.put("SalesDate", list.get(idx++));
+			for(String dim : dimList) {
+				map.put(dim, list.get(idx++));
+			}
 
 			for(String measure : measureList) {
 				map.put(measure, list.get(idx++));
@@ -234,13 +238,23 @@ public class DataFeeds {
 	@Produces(MediaType.APPLICATION_JSON+"; charset=utf-8")
 	public Response getUserViewMap(@PathParam("userId") String userId) throws Exception{
 		Map<String, String> map = GlobalCache.getUserViewMap(userId);
-		return Response.ok().entity(map).build();
+		ObjectMapper mapper = new ObjectMapper();
+		String value = null;
+		try {
+			value = mapper.writeValueAsString(map);
+			System.out.println("JSON - " + value);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return Response.serverError().build();
+		}
+		return Response.ok().entity(value).build();
+
 	}
 
 	@POST
 	@Path("/users/{userId}/userViews/{userViewName}")
 	@Produces(MediaType.APPLICATION_JSON+"; charset=utf-8")
-	public Response createUserView(@PathParam("userId")String userId, @PathParam("userViewName")String userViewName, @QueryParam("userViewJson")String userViewJson) {
+	public Response createUserView(@PathParam("userId")String userId, @PathParam("userViewName")String userViewName, String userViewJson) {
 		// TODO get userId from http body
 		DbOperation.createUserView(userId, userViewName, userViewJson);
 		return Response.ok().entity(userViewJson).build();

@@ -36,7 +36,9 @@ public class DbOperation {
     }
 
     public static void createUserView(String userId, String userViewName, String userViewJson) {
-        String sql = "Insert into UserViews (userViewName, userId, details) Values (?, ?, ?, ?)";
+        System.out.println("user view Json: " + userViewJson);
+
+        String sql = "Insert into UserViews (userViewName, userId, details) Values (?, ?, ?)";
         DBHelper.runQuery(sql, new String[]{userViewName, userId, userViewJson},
                 new ColumnType[]{ColumnType.STRING, ColumnType.INTEGER, ColumnType.STRING, ColumnType.STRING});
         GlobalCache.addToUserViewCache(userViewName, userId, userViewJson);
@@ -49,7 +51,7 @@ public class DbOperation {
 
     public static Map<String, Map<String, String>> getUserViewMap() {
         Map<String, Map<String, String>> map = new HashMap<>();
-        String query = "select id, userId, userViewName, details, tableName from UserViews";
+        String query = "select id, userId, userViewName, details from UserViews";
         List<List<String>> res = DBHelper.getQueryResult(query);
         for(List<String> list : res) {
             String userViewId = list.get(0);
