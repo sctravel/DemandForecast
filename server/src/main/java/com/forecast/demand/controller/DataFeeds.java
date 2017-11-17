@@ -256,7 +256,9 @@ public class DataFeeds {
 	@Produces(MediaType.APPLICATION_JSON+"; charset=utf-8")
 	public Response createUserView(@PathParam("userId")String userId, @PathParam("userViewName")String userViewName, String userViewJson) {
 		// TODO get userId from http body
+
 		DbOperation.createUserView(userId, userViewName, userViewJson);
+		GlobalCache.initialize();
 		return Response.ok().entity(userViewJson).build();
 	}
 

@@ -41,7 +41,7 @@ public class DbOperation {
         String sql = "Insert into UserViews (userViewName, userId, details) Values (?, ?, ?)";
         DBHelper.runQuery(sql, new String[]{userViewName, userId, userViewJson},
                 new ColumnType[]{ColumnType.STRING, ColumnType.INTEGER, ColumnType.STRING, ColumnType.STRING});
-        GlobalCache.addToUserViewCache(userViewName, userId, userViewJson);
+
     }
 
     public static void updateUserView(String userId, String userViewName, String userViewJson) {
