@@ -77,11 +77,15 @@ angular.module('setupPageCtrl', []).controller('setupPageCtrl', function($scope,
     $scope.save = function(){
     console.log("save");
         $scope.view["series"] =  $scope.selectedMeasures;
-        dimensionsTreeInstance = vm.dimensionsTree.jstree(true)
+        dimensionsTreeInstance = vm.dimensionsTree.jstree(true);
         treeSelected = dimensionsTreeInstance.get_selected();
         for(var i = 0; i < treeSelected.length; i++){
            if(dimensionsTreeInstance.get_node(treeSelected[i]).parent == "#") {
-                 $scope.view.dimensions[treeSelected[i]] = [];
+                 if($scope.view.dimensions[treeSelected[i]] ==undefined){
+                    $scope.view.dimensions[treeSelected[i]] = [];
+                 }else{
+                    continue;
+                 };
            }else{
                 if( $scope.view.dimensions[dimensionsTreeInstance.get_node(treeSelected[i]).parent] == undefined) {
                     $scope.view.dimensions[dimensionsTreeInstance.get_node(treeSelected[i]).parent] =[];

@@ -98,7 +98,7 @@
                                 <div class="panel-heading"><i class="glyphicon"></i>Dimensions</div>
                                 <div class="panel-body">
                                     <div id="dimensions" js-tree="vm.treeConfig" should-apply="vm.applyModelChanges()"
-                                         ng-model="vm.treeData" tree="vm.treeInstanceDimensions" tree-events="open_node:open_nodeCB;before_open: before_openCB"></div>
+                                         ng-model="vm.dimensionTreeData" tree="vm.treeInstanceDimensions" ></div>
                                 </div>
                             </div>
                         </div>
@@ -110,7 +110,7 @@
                                 <div class="panel-heading"><i class="glyphicon"></i>Measures</div>
                                 <div class="panel-body">
                                     <div id="measures" js-tree="vm.treeConfig" should-apply="vm.applyModelChanges()"
-                                         ng-model="vm.measureData" tree="vm.treeInstanceMeasures"></div>
+                                         ng-model="vm.measureTreeData" tree="vm.treeInstanceMeasures"></div>
                                 </div>
                             </div>
                         </div>
@@ -145,7 +145,7 @@
             <!-- /.panel-heading -->
             <div class="panel-body">
                 <div class="list-group">
-                    <a href="#" class="list-group-item" ng-repeat ="(key, value) in userViews">
+                    <a href="#" class="list-group-item" ng-repeat ="(key, value) in userViews" ng-click="getTree(key)">
                         <i class="fa fa-table fa-fw"></i> {{key}}
                         <span class="pull-right text-muted small"><em>4 minutes ago</em></span>
                     </a>
