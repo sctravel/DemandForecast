@@ -6,6 +6,8 @@
       $scope.data = {ready:false};
       $scope.gridOptions = {};
       $scope.gridOptions.columnDefs = [];
+
+
       $scope.msg = {};
 
       $scope.changeList = {};
@@ -89,8 +91,6 @@
                    vm.treeData.push({ id: dimensions[index].name, parent: '#', text: dimensions[index].name, state: { opened: false } });
                    var levelUrl = '/data/tables/YumSalesForecast/distinctValues?dimList=' + dimensions[index].levels[0];
                    levelUrl = levelUrl + "&dimType=" + dimensions[index].name + "&dimLevel=" + dimensions[index].levels[0] + "&Levels=" + levels ;
-                   console.log(levelUrl);
-
                    $http.get(levelUrl).then(function getSuccess(response) {
                                var dimType = response.data[response.data.length-1];
                                var dimLevel = response.data[response.data.length-2];
@@ -160,8 +160,9 @@
         }
 
         $scope.query = function () {
-         console.log("in");
+         alert("in");
          $scope.gridOptions.columnDefs=[];
+         $scope.gridOptions.columnDefs.push({name:"SalesDate"});
           var queryUrl = "/data/tables/YumSalesForecast/query?";
             var treeInstance = vm.treeInstanceDimensions.jstree(true);
             var selectedDimensions = vm.treeInstanceDimensions.jstree(true).get_selected();
@@ -179,11 +180,9 @@
             filter_infos = {};
             for(var i=0; i < selectedDimensions.length;i++){
                  selected_node = treeInstance.get_node(selectedDimensions[i]);
-
                  if(selected_node.id.indexOf("_") < 0){
                     continue;
                  }
-                 console.log(selected_node.parent.id);
                  if (selected_node.parent.indexOf("_") > -1 && treeInstance.get_node(selected_node.parent).state.selected) continue;
                  infos = selected_node.id.split("_");
                  dimension_name = infos[0];
@@ -193,9 +192,7 @@
                  dimension_path =  level_struc.slice(0,level_struc.indexOf(dimension_level)+1);
                  for(var j = 0; j < dimension_path.length;j++){
                      var index = dimlist.indexOf(dimension_path[j]);
-                    console.log(dimension_path[j] + " : " + index);
                      var pre = index -1 ;
-                      console.log( dimension_path[j] + " pre" + " : " + pre);
                     if( index > -1 && ((pre >=0 && dimlist[pre] == ",") || pre < 0)) continue;
 
 
@@ -236,7 +233,6 @@
             filter= filter.substring(0,filter.length-5);
 
             url = "/data/tables/YumSalesForecast/query?dimList=" + dimlist + "&measureList=" + measureList + "&filter=" + filter;
-            console.log(url);
             $http.get(url).then(function getSuccess(response)  {
              console.dir(response.data);
                 for(i = 0; i < response.data.length; i++){

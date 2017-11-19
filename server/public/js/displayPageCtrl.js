@@ -109,9 +109,9 @@ angular.module('displayPageCtrl', []).controller('displayPageCtrl', function($sc
             var filter ="";
             var measureList = "";
             filter_infos = {};
+            $scope.gridOptions.columnDefs.push({name: "SalesDate"});
             for(var i=0; i < selectedDimensions.length;i++){
                  selected_node = treeInstance.get_node(selectedDimensions[i]);
-
                  if(selected_node.id.indexOf("_") < 0){
                     continue;
                  }
@@ -152,22 +152,30 @@ angular.module('displayPageCtrl', []).controller('displayPageCtrl', function($sc
                $scope.gridOptions.columnDefs.push(gridOption);
 
             }
+
+            console.log($scope.gridOptions.columnDefs);
             measureList = measureList.substring(0,measureList.length-1);
             console.log(filter_infos);
-             for(var prop in filter_infos){
-                            var tmp = "";
-                            var vals = filter_infos[prop];
+            var tree_filters ={};
+            angular.copy(userView.filters, tree_filters);
 
-                            for(var v in vals){
-                                tmp = tmp + prop + "=" + '"' + vals[v] + '"' + " or ";
-                            }
-                            tmp= tmp.substring(0,tmp.length-4);
-                            tmp = "(" + tmp + ")";
-                            filter = filter + tmp + " and ";
-                        }
+             for(var prop in filter_infos){
+               if(tree_filters[prop]!=undefined){
+                    for(var i = 0; i < filter_infos[prop].length; i++){
+                        tree_filters[prop].push(filter_infos[prop][i]);
+                    }
+               }else{
+                    tree_filters[prop]=[];
+                    for(var i = 0; i < filter_infos[prop].length; i++){
+                                            tree_filters[prop].push(filter_infos[prop][i]);
+                                        }
+               }
+            }
+            var filtersring = getFilterString(tree_filters);
+
             filter= filter.substring(0,filter.length-5);
 
-            url = "/data/tables/YumSalesForecast/query?dimList=" + dimlist + "&measureList=" + measureList + "&filter=" + filter + "&timeGrain=" + '"' + userView.timeGrain + '"';
+            url = "/data/tables/YumSalesForecast/query?dimList=" + dimlist + "&measureList=" + measureList + "&"+ filtersring + "&timeGrain="  + userView.timeGrain ;
             console.log(url);
             $http.get(url).then(function getSuccess(response)  {
              console.dir(response.data);
