@@ -45,7 +45,7 @@ angular.module('displayPageCtrl', []).controller('displayPageCtrl', function($sc
                             }
                             vm.dimensionTreeData.push({ id: "placeholder_" + response.data[i] , parent:curr_id, text: "", state: { opened : false }, li_attr :{class: "hidden"} });
                         }
-
+                        console.log("Sucessfully got dimension values")
                     }, function getError(response) {
                     toaster.pop('error', 'get tables error', 'get /data/tebles error ');
 
@@ -184,7 +184,7 @@ angular.module('displayPageCtrl', []).controller('displayPageCtrl', function($sc
                 }
 
                 $scope.gridOptions.data = response.data;
-
+                console.log("Successfully got data from query api")
             });
             $scope.data.ready = true;
 
@@ -276,6 +276,7 @@ angular.module('displayPageCtrl', []).controller('displayPageCtrl', function($sc
                             newData.push({ id: "placeholder_" + curr_id , parent:curr_id, text: "", state: { opened : false }, li_attr :{class: "hidden"} });
                         }
                        angular.copy(newData,treeData);
+                       console.log("Successfully got distinct values")
                     }, function getError(response) {
                       toaster.pop('error', 'get tables error', 'get /data/tebles error ');
                     });
@@ -309,9 +310,11 @@ angular.module('displayPageCtrl', []).controller('displayPageCtrl', function($sc
 
 
         $http.get(url).then(function getSuccess(response) {
-                toaster.pop('success', 'get tables', 'get /data/tables ok ');
+                toaster.pop('success', 'get userViews', 'get /data/tables ok ');
                 $scope.userViews = response.data;
                 a = response;
+                console.log(url + " Success")
+
         }, function getError(response) {
             toaster.pop('error', 'get tables error', 'get /data/tebles error ');
         });
