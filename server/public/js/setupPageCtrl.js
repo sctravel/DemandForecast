@@ -107,6 +107,7 @@ angular.module('setupPageCtrl', []).controller('setupPageCtrl', function($scope,
         var data = JSON.stringify($scope.view);
         $http.post(url, data).then(function(response) {
            alert("userview successfully saved ");
+           window.location.href="/home/listUserView.html";
           }, function(response) {
            alert("job failed");
         });
