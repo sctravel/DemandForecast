@@ -413,7 +413,7 @@
                                 <div class="panel panel-default">
                                     <div class="panel-heading"><i class="glyphicon"></i>Dimensions</div>
                                     <div class="panel-body">
-                                        <div id="dimensions" js-tree="vm.treeConfig" should-apply="vm.applyModelChanges()"
+                                        <div id="dimensions" js-tree="vm.treeConfig" should-apply="false"
                                              ng-model="vm.dimensionTreeData" tree="vm.dimensionsTree" >
                                         </div>
                                     </div>
@@ -442,7 +442,7 @@
                                 <div class="panel panel-default">
                                     <div class="panel-heading"><i class="glyphicon"></i>Dimensions</div>
                                     <div class="panel-body">
-                                        <div id="filters" js-tree="vm.filterTreeConfig" should-apply="vm.applyModelChanges()"
+                                        <div id="filters" js-tree="vm.filterTreeConfig" should-apply="false"
                                              ng-model="vm.filterTreeData" tree="vm.filterTree" tree-events="changed.jstree:selection_nodeCB" >
                                         </div>
                                     </div>

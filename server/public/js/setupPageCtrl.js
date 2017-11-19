@@ -117,6 +117,12 @@ angular.module('setupPageCtrl', []).controller('setupPageCtrl', function($scope,
     vm = this;
     vm.dimensionTreeData = [];
     vm.filterTreeData = [];
+    function reloadDimensionTree(){
+         vm.treeConfig.version ++;
+    }
+    function reloadFilterTree(){
+             vm.filterTreeConfig.version ++;
+        }
     vm.treeConfig = {
               core: {
                   multiple: true,
@@ -164,16 +170,19 @@ angular.module('setupPageCtrl', []).controller('setupPageCtrl', function($scope,
             response.data[0].dimensions.forEach(function(dimension){
 
                   vm.dimensionTreeData.push({ id:dimension.name, parent:'#', text: dimension.displayName, state: { opened: true }});
+
                   for(var i = 0; i <dimension.levels.length;i++ ){
                     vm.dimensionTreeData.push({ id:dimension.levels[i], parent:dimension.name, text: dimension.levels[i], state: { opened: false }});
+
                   }
+                  reloadDimensionTree();
 
                 vm.filterTreeData.push({ id:dimension.name, parent:'#', text: dimension.displayName, state: { opened: true, disabled: true }});
                 for(var i = 0; i <dimension.levels.length;i++ ){
                    vm.filterTreeData.push({ id:dimension.levels[i], parent:dimension.name, text: dimension.levels[i], state: { opened: false }});
                 }
+                reloadFilterTree();
             })
-                        a = response.data[0];
     }, function getError(response) {
         toaster.pop('error', 'get tables error', 'get /data/tebles error ');
     });
