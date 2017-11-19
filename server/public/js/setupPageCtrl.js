@@ -77,7 +77,7 @@ angular.module('setupPageCtrl', []).controller('setupPageCtrl', function($scope,
     }
 
     $scope.save = function(){
-    console.log("save");
+        console.log("Saving User views");
         $scope.view["series"] =  $scope.selectedMeasures;
 
         dimensionsTreeInstance = vm.dimensionsTree.jstree(true);
@@ -157,33 +157,35 @@ angular.module('setupPageCtrl', []).controller('setupPageCtrl', function($scope,
         plugins: [ 'checkbox','changed']
     };
 
-
-
     $http.get('/data/tables').then(function getSuccess(response) {
-             console.log("in");
-            toaster.pop('success', 'get tables', 'get /data/tables ok ');
+            console.log("Successfully get all tables before");
             var i = 1;
             response.data[0].measureColumnNames.forEach(function(measure){
                 $scope.measures.push({ id: i,  name: measure});
+                console.log("Measure:"+measure)
                 i++;
             });
             response.data[0].dimensions.forEach(function(dimension){
 
-                  vm.dimensionTreeData.push({ id:dimension.name, parent:'#', text: dimension.displayName, state: { opened: true }});
 
-                  for(var i = 0; i <dimension.levels.length;i++ ){
+                  vm.dimensionTreeData.push({ id:dimension.name, parent:'#', text: dimension.displayName, state: { opened: true }});
+      for(var i = 0; i <dimension.levels.length;i++ ){
                     vm.dimensionTreeData.push({ id:dimension.levels[i], parent:dimension.name, text: dimension.levels[i], state: { opened: false }});
 
                   }
+
                   reloadDimensionTree();
+
 
                 vm.filterTreeData.push({ id:dimension.name, parent:'#', text: dimension.displayName, state: { opened: true, disabled: true }});
                 for(var i = 0; i <dimension.levels.length;i++ ){
-                   vm.filterTreeData.push({ id:dimension.levels[i], parent:dimension.name, text: dimension.levels[i], state: { opened: false }});
+                    vm.filterTreeData.push({ id:dimension.levels[i], parent:dimension.name, text: dimension.levels[i], state: { opened: false }});
                 }
                 reloadFilterTree();
             })
+
     }, function getError(response) {
         toaster.pop('error', 'get tables error', 'get /data/tebles error ');
     });
+    console.log("end of setupPageCtrl")
 });
