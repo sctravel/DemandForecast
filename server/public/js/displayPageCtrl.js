@@ -4,6 +4,7 @@ angular.module('displayPageCtrl', []).controller('displayPageCtrl', function($sc
         $scope.showViewList = true;
         $scope.title = "我的工作表";
         $scope.showTree = false;
+        $scope.showDataGrid=false;
         $scope.data = {ready:false};
         $scope.gridOptions = {};
         $scope.gridOptions.columnDefs = [];
@@ -73,6 +74,7 @@ angular.module('displayPageCtrl', []).controller('displayPageCtrl', function($sc
                  currChange.newValue = newValue;
                  currChange.oldValue = oldValue;
                  currChange.schema = $scope.gridOptions.columnDefs;
+                 aaa = $scope.gridApi;
                  $scope.changeKeys.push(currChange.key);
                  $scope.changeList[currChange.key] = currChange;
 
@@ -81,6 +83,14 @@ angular.module('displayPageCtrl', []).controller('displayPageCtrl', function($sc
              $scope.$apply();
             });
         };
+        $scope.goToCreatePage = function(){
+             window.location.href="/home/createUserView.html";
+        }
+
+        $scope.returnToList = function(){
+            switchUI();
+            location = window.location.href;
+        }
 
         $scope.save = function(){
             if($scope.changeKeys.length == 0){
@@ -261,7 +271,9 @@ angular.module('displayPageCtrl', []).controller('displayPageCtrl', function($sc
         var buildDimensionTreeData = function(data,treeData,newData){
             for(var prop in data){
               if (data.hasOwnProperty(prop)){
+
                     newData.push({ id:prop, parent:'#', text: prop, state: { opened: false }});
+                    console.log("add");
                     var dim = data[prop][0];
                     var filters = getFilterString(userView.filters);
                     //get this shitty code because we don't know (KFC belong to Category, and what its next level is when user clicked on the node and loading children nodes)
@@ -281,6 +293,7 @@ angular.module('displayPageCtrl', []).controller('displayPageCtrl', function($sc
                       toaster.pop('error', 'get tables error', 'get /data/tebles error ');
                     });
               }
+               //newData=[]; //try to get rig of wierd cache issue;
             }
         }
 
@@ -306,6 +319,7 @@ angular.module('displayPageCtrl', []).controller('displayPageCtrl', function($sc
             $scope.title = viewName;
             $scope.showViewList = !$scope.showViewList;
             $scope.showTree = !$scope.showTree;
+            $scope.showDataGrid =!$scope.showDataGrid;
         }
 
 

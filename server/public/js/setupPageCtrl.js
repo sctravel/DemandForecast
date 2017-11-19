@@ -43,6 +43,9 @@ angular.module('setupPageCtrl', []).controller('setupPageCtrl', function($scope,
 
         var levelUrl = '/data/tables/YumSalesForecast/distinctValues?dimList=' + level;
          $http.get(levelUrl).then(function getSuccess(response) {
+                if( $scope.availableDimensions.length > 0){
+                     $scope.availableDimensions =[];
+                }
                 for(var i = 0; i < response.data.length-3; i++){
                    var dimension = {id : i, name : response.data[i]};
                    $scope.availableDimensions.push(dimension);
@@ -107,9 +110,6 @@ angular.module('setupPageCtrl', []).controller('setupPageCtrl', function($scope,
           }, function(response) {
            alert("job failed");
         });
-
-
-
     }
 
 
@@ -169,7 +169,7 @@ angular.module('setupPageCtrl', []).controller('setupPageCtrl', function($scope,
 
 
                   vm.dimensionTreeData.push({ id:dimension.name, parent:'#', text: dimension.displayName, state: { opened: true }});
-      for(var i = 0; i <dimension.levels.length;i++ ){
+                    for(var i = 0; i <dimension.levels.length;i++ ){
                     vm.dimensionTreeData.push({ id:dimension.levels[i], parent:dimension.name, text: dimension.levels[i], state: { opened: false }});
 
                   }

@@ -69,7 +69,7 @@ public class App
         ResourceHandler resourceHandler= new ResourceHandler();
         resourceHandler.setResourceBase("public");
         resourceHandler.setDirectoriesListed(true);
-        resourceHandler.setWelcomeFiles(new String [] {"createUserView.html","logon.html"});
+        resourceHandler.setWelcomeFiles(new String [] {"listUserView.html","logon.html"});
         ContextHandler contextStaticContentHandler= new ContextHandler("/home");
         contextStaticContentHandler.setHandler(resourceHandler); 
            

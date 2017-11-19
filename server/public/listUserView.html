@@ -129,13 +129,14 @@
             </div>
             <!-- /.col-lg-12 -->
         </div>
-        <div class="row"  ng-show="data.ready" >
+        <div class="row"  ng-show="data.ready && showDataGrid" >
             <br>
             <strong>Last Cell Edited:</strong> {{msg.lastCellEdited}}
             <br>
             <div id="table-wrapper" ui-grid="gridOptions" class="grid,panel-body" ui-grid-auto-resize ui-grid-edit  ui-grid-cellNav ></div>
             <br>
             <button id="footerButton" class="btn btn-success" ng-click="toggleFooter()">提交</button>
+            <button id="returnToList" class="btn btn-success" ng-click="returnToList()">返回工作表目录</button>
         </div>
 
         <div class="panel panel-default" ng-if="showViewList">
@@ -147,18 +148,15 @@
                 <div class="list-group">
                     <a href="#" class="list-group-item" ng-repeat ="(key, value) in userViews" ng-click="getTree(key)">
                         <i class="fa fa-table fa-fw"></i> {{key}}
-                        <span class="pull-right text-muted small"><em>4 minutes ago</em></span>
+                        <span class="pull-right text-muted small"><em></em></span>
                     </a>
 
                 </div>
                 <!-- /.list-group -->
-                <a href="#" class="btn btn-default btn-block">View All Alerts</a>
+                <a  class="btn btn-default btn-block" ng-click = "goToCreatePage()">创建工作表</a>
             </div>
             <!-- /.panel-body -->
         </div>
-
-
-
         <!-- /.row -->
     </div>
     <!-- /#page-wrapper -->
