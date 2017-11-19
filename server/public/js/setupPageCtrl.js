@@ -9,6 +9,8 @@ angular.module('setupPageCtrl', []).controller('setupPageCtrl', function($scope,
     $scope.filters = {};
     $scope.timeRangePos=[1,2,3,4,5];
     $scope.timeRangeNeg=[-1,-2,-3,-4,-5];
+    $scope.timeGrain = "";
+
 
 
     $scope.moveItem = function(item, from, to) {
@@ -77,6 +79,7 @@ angular.module('setupPageCtrl', []).controller('setupPageCtrl', function($scope,
     $scope.save = function(){
     console.log("save");
         $scope.view["series"] =  $scope.selectedMeasures;
+
         dimensionsTreeInstance = vm.dimensionsTree.jstree(true);
         treeSelected = dimensionsTreeInstance.get_selected();
         for(var i = 0; i < treeSelected.length; i++){
@@ -97,7 +100,7 @@ angular.module('setupPageCtrl', []).controller('setupPageCtrl', function($scope,
         $scope.view.filters = $scope.filters;
         var userId = 123321;
         var url = '/data/users' + '/'+ userId + '/userViews' + '/' + $scope.view.name;
-        console.log(url);
+        $scope.view.timeGrain = $scope.timeGrain;
         var data = JSON.stringify($scope.view);
         $http.post(url, data).then(function(response) {
            alert("userview successfully saved ");
