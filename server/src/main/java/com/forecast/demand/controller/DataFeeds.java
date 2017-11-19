@@ -68,6 +68,29 @@ public class DataFeeds {
         queryBuilder.append(sqlGen.generateFrom(tableName));
         if(filter!=null&&!filter.trim().isEmpty()) queryBuilder.append(sqlGen.generateWhere(filter));
         List<List<String>> res = DBHelper.getQueryResult(queryBuilder.toString());
+
+        //TODO this is hack logic to remove duplicate district in db
+        if(!res.isEmpty()){
+        	if(res.get(0)!=null && res.get(0).size()==1) {
+				Set<String> set =new HashSet<>();
+				List<List<String>> res1 = new ArrayList<>();
+				for(List<String> s : res) {
+					String ss = s.get(0).trim();
+					if(ss!=null&&!ss.isEmpty()&&((int)ss.charAt(0)==65279)) {
+						ss = ss.substring(1);
+					}
+					set.add(ss);
+				}
+
+				for(String s : set){
+					List<String> list = new ArrayList<>();
+					list.add(s);
+					res1.add(new ArrayList<String>(list));
+				}
+				res = res1;
+			}
+		}
+
         List<String> dt = new LinkedList<String>() ;
 		List<String> dl = new LinkedList<String>() ;
 		List<String> le = new LinkedList<String>() ;
@@ -106,8 +129,10 @@ public class DataFeeds {
 		List<String> dimList = Arrays.asList(dimListString.split(","));
 		List<String> measureList = Arrays.asList(measureListString.split(","));
 
-
+		System.out.println("!!!!!!!!!!timeGrainString: "+timeGrainString);
 		TimeGrain timeGrain = StringUtil.searchEnum(TimeGrain.class, timeGrainString);
+		System.out.println("!!!!!!!!!!timeGrain: "+timeGrain);
+
 		columnNames.add(sqlGen.generateColumnFromGrain(timeGrain, "SalesDate") + " AS " + "SalesDate");
 		columnNames.addAll(dimList);
 		for(String measure : measureList) {
@@ -210,7 +235,7 @@ public class DataFeeds {
 	@POST
 	@Path("/tables/{tableName}/adjustValue")
 	@Produces(MediaType.APPLICATION_JSON+"; charset=utf-8")
-	public Response adjustValue(@PathParam("tableName")String tableName, @QueryParam("measureAdjustment")String measureAdjustment) {
+	public Response adjustValue(@PathParam("tableName")String tableName, String measureAdjustment) {
 		//IMeasureAdjuster adjuster = MeasureAdjusterFactory.getMeasureAdjuster(measureAdjustment.getMeasureType());
 		//adjuster.adjustMeasure(measureAdjustment);
 		return Response.ok().build();

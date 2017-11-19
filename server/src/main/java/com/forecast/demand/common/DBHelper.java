@@ -119,7 +119,11 @@ public class DBHelper {
                     // Also there are many methods on the result set to return
                     //  the column as a particular type. Refer to the Sun documentation
                     //  for the list of valid conversions.
-                    list.add(new String(rs.getBytes(i),"UTF-8"));
+                    String s = (new String(rs.getBytes(i),"UTF-8")).trim();
+                    if(s!=null&&s.length()>0&&((int)s.charAt(0)==65279)){
+                        s = s.substring(1);
+                    }
+                    list.add(s);
                 }
                 result.add(list);
             }
