@@ -32,6 +32,7 @@ angular.module('displayPageCtrl', []).controller('displayPageCtrl', function($sc
                 if(all_levels.indexOf(curr_level) +1 < all_levels.length){
                     var next_level = all_levels[all_levels.indexOf(curr_level)+1];
                     var filter = mergeFilters(userView.filters,curr_level,curr_filter);
+
                     var url ='/data/tables/YumSalesForecast/distinctValues?dimList=' + next_level + '&' + filter + "&dimType=" + curr_node.id + "&dimLevel=" + next_level + "&Levels=" + all_levels;
                     $http.get(url).then(function getSuccess(response) {
                         var dimType = response.data[response.data.length-1];
@@ -46,7 +47,7 @@ angular.module('displayPageCtrl', []).controller('displayPageCtrl', function($sc
                             }
                             vm.dimensionTreeData.push({ id: "placeholder_" + response.data[i] , parent:curr_id, text: "", state: { opened : false }, li_attr :{class: "hidden"} });
                         }
-                        console.log("Sucessfully got dimension values")
+
                     }, function getError(response) {
                     toaster.pop('error', 'get tables error', 'get /data/tebles error ');
 
@@ -125,19 +126,19 @@ angular.module('displayPageCtrl', []).controller('displayPageCtrl', function($sc
                  if(selected_node.id.indexOf("_") < 0){
                     continue;
                  }
-                 console.log(selected_node.parent.id);
+
                  if (selected_node.parent.indexOf("_") > -1 && treeInstance.get_node(selected_node.parent).state.selected) continue;
                  infos = selected_node.id.split("_");
                  dimension_name = infos[0];
                  dimension_level = infos[1];
                  level_struc = infos[2].split(",");
-                 console.dir(level_struc);
+
                  dimension_path =  level_struc.slice(0,level_struc.indexOf(dimension_level)+1);
                  for(var j = 0; j < dimension_path.length;j++){
                      var index = dimlist.indexOf(dimension_path[j]);
-                    console.log(dimension_path[j] + " : " + index);
+
                      var pre = index -1 ;
-                      console.log( dimension_path[j] + " pre" + " : " + pre);
+
                     if( index > -1 && ((pre >=0 && dimlist[pre] == ",") || pre < 0)) continue;
 
 
@@ -163,9 +164,9 @@ angular.module('displayPageCtrl', []).controller('displayPageCtrl', function($sc
 
             }
 
-            console.log($scope.gridOptions.columnDefs);
+
             measureList = measureList.substring(0,measureList.length-1);
-            console.log(filter_infos);
+
             var tree_filters ={};
             angular.copy(userView.filters, tree_filters);
 
@@ -177,24 +178,26 @@ angular.module('displayPageCtrl', []).controller('displayPageCtrl', function($sc
                }else{
                     tree_filters[prop]=[];
                     for(var i = 0; i < filter_infos[prop].length; i++){
-                                            tree_filters[prop].push(filter_infos[prop][i]);
-                                        }
+                        tree_filters[prop].push(filter_infos[prop][i]);
+                    }
                }
             }
-            var filtersring = getFilterString(tree_filters);
+            var filterString = getFilterString(tree_filters);
+            filterString  = filterString.slice(0,filterString.length-1);
+            var timeString = " and (SalesDate >= " +  "'" + userView.From + "'" + " and SalesDate <= " +  "'" + userView.To + "'" + " )";
+            filterString  = filterString + timeString+ ")";
+            console.log("filter=" + filterString);
 
-            filter= filter.substring(0,filter.length-5);
-
-            url = "/data/tables/YumSalesForecast/query?dimList=" + dimlist + "&measureList=" + measureList + "&"+ filtersring + "&timeGrain="  + userView.timeGrain ;
+            url = "/data/tables/YumSalesForecast/query?dimList=" + dimlist + "&measureList=" + measureList + "&"+ filterString + "&timeGrain="  + userView.timeGrain ;
             console.log(url);
             $http.get(url).then(function getSuccess(response)  {
-             console.dir(response.data);
+
                 for(i = 0; i < response.data.length; i++){
                   response.data[i].registered = new Date(response.data[i].registered);
                 }
 
                 $scope.gridOptions.data = response.data;
-                console.log("Successfully got data from query api")
+
             });
             $scope.data.ready = true;
 
@@ -273,7 +276,7 @@ angular.module('displayPageCtrl', []).controller('displayPageCtrl', function($sc
               if (data.hasOwnProperty(prop)){
 
                     newData.push({ id:prop, parent:'#', text: prop, state: { opened: false }});
-                    console.log("add");
+
                     var dim = data[prop][0];
                     var filters = getFilterString(userView.filters);
                     //get this shitty code because we don't know (KFC belong to Category, and what its next level is when user clicked on the node and loading children nodes)
@@ -288,7 +291,7 @@ angular.module('displayPageCtrl', []).controller('displayPageCtrl', function($sc
                             newData.push({ id: "placeholder_" + curr_id , parent:curr_id, text: "", state: { opened : false }, li_attr :{class: "hidden"} });
                         }
                        angular.copy(newData,treeData);
-                       console.log("Successfully got distinct values")
+
                     }, function getError(response) {
                       toaster.pop('error', 'get tables error', 'get /data/tebles error ');
                     });
@@ -327,7 +330,7 @@ angular.module('displayPageCtrl', []).controller('displayPageCtrl', function($sc
                 toaster.pop('success', 'get userViews', 'get /data/tables ok ');
                 $scope.userViews = response.data;
                 a = response;
-                console.log(url + " Success")
+
 
         }, function getError(response) {
             toaster.pop('error', 'get tables error', 'get /data/tebles error ');

@@ -10,6 +10,8 @@ angular.module('setupPageCtrl', []).controller('setupPageCtrl', function($scope,
     $scope.timeRangePos=[1,2,3,4,5];
     $scope.timeRangeNeg=[-1,-2,-3,-4,-5];
     $scope.timeGrain = "";
+    $scope.from="";
+    $scope.to="";
 
 
 
@@ -104,6 +106,52 @@ angular.module('setupPageCtrl', []).controller('setupPageCtrl', function($scope,
         var userId = 123321;
         var url = '/data/users' + '/'+ userId + '/userViews' + '/' + $scope.view.name;
         $scope.view.timeGrain = $scope.timeGrain;
+
+        if($scope.view.relativeOrFix == "relativeToday"){
+            if( $scope.view.timeGrain == "daily"){
+
+                var f = new Date();
+                f.setDate(f.getDate() + ($scope.view.From - 0));
+                $scope.view.From= formatDate(f);
+                var t = new Date();
+                t.setDate(t.getDate() + ($scope.view.To - 0));
+                $scope.view.To= formatDate(t);
+
+            }else if( $scope.view.timeGrain == "weekly"){
+
+                var f = new Date();
+                f.setDate(f.getDate() + ($scope.view.From * 7));
+                $scope.view.From= formatDate(f);
+                var t = new Date();
+
+                t.setDate(t.getDate() + ($scope.view.To * 7));
+                $scope.view.To= formatDate(t);
+            }else if( $scope.view.timeGrain == "monthly"){
+                var f = new Date();
+                f.setMonth(f.getMonth() + ($scope.view.From - 0));
+                $scope.view.From= formatDate(f);
+                var t = new Date();
+                t.setMonth(t.getMonth() + ($scope.view.To - 0));
+                $scope.view.To= formatDate(t);
+
+            }else if($scope.view.timeGrain == "quarterly"){
+                  var f = new Date();
+                f.setMonth(f.getMonth() + ($scope.view.From * 3));
+                $scope.view.From= formatDate(f);
+                var t = new Date();
+                t.setMonth(t.getMonth() + ($scope.view.To * 3));
+                $scope.view.To= formatDate(t);
+            }else if($scope.view.timeGrain == "yearly"){
+                   var f = new Date();
+
+                    f.setYear(f.getFullYear() + ($scope.view.From -0));
+                    $scope.view.From= formatDate(f);
+                    var t = new Date();
+                    t.setYear(t.getFullYear() + ($scope.view.To -0));
+                    $scope.view.To= formatDate(t);
+            }
+
+        }
         var data = JSON.stringify($scope.view);
         $http.post(url, data).then(function(response) {
            alert("userview successfully saved ");
@@ -114,6 +162,17 @@ angular.module('setupPageCtrl', []).controller('setupPageCtrl', function($scope,
     }
 
 
+    formatDate = function(date) {
+        var d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+
+        if (month.length < 2) month = '0' + month;
+        if (day.length < 2) day = '0' + day;
+
+        return [year, month, day].join('-');
+    }
 
     vm = this;
     vm.dimensionTreeData = [];
